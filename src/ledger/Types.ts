@@ -1,5 +1,8 @@
 import { Any, JsonObject, JsonProperty, JsonConvert, ValueCheckingMode, OperationMode } from "json2typescript";
 
+/**
+ * Identifier of a DAML template.
+ */
 @JsonObject("TemplateId")
 export class TemplateId {
   @JsonProperty("packageId", String)
@@ -10,24 +13,38 @@ export class TemplateId {
   entityName: string = '';
 }
 
+/**
+ * An interface for template types. This is the counterpart of DAML's
+ * `Template` type class.
+ */
 export interface Template<T> {
   templateId: TemplateId;
   fromJSON(json: unknown): T;
   toJSON(t: T): unknown;
 }
 
+/**
+ * An interface for choice types. This is the counterpart of DAML's
+ * `Choice` type class in DAML.
+ */
 export interface Choice<T, C> {
   template: Template<T>;
   choiceName: string;
   toJSON(c: C): unknown;
 }
 
+/**
+ * The counterpart of DAML's `Party` type.
+ */
 export type Party = string;
 export const Party = String;
 
 type AnyContractId = string;
 const AnyContractId = String;
 
+/**
+ * The counterpart of DAML's `ContractId T` type.
+ */
 export class ContractId<T> {
   readonly contractId: AnyContractId;
 
@@ -35,9 +52,17 @@ export class ContractId<T> {
     this.contractId = contractId;
   }
 
+  /**
+   * Create a `ContractId<T>` from its JSON representation. This is intended
+   * for use by the `Ledger` class only.
+   */
   static fromJSON<T>(contractId: AnyContractId): ContractId<T> {
     return new ContractId<T>(contractId);
   }
+  /**
+   * Convert a `ContractId<T>` into its JSON representation. This is intended
+   * for use by the `Ledger` class only.
+   */
 
   toJSON = (): AnyContractId => this.contractId;
 }
@@ -64,22 +89,31 @@ class AnyContract {
   workflowId?: string = '';
 }
 
+/**
+ * A class representing a contract instance of a template type `T`. Besides
+ * the contract data it also contains meta data like the contract id,
+ * signatories, etc.
+ */
 export class Contract<T> {
+  templateId: TemplateId = new TemplateId();
+  contractId: ContractId<T>;
+  signatories: Party[] = [];
   observers: Party[] = [];
   agreementText: string = '';
-  signatories: Party[] = [];
   key: unknown = undefined;
-  contractId: ContractId<T>;
-  templateId: TemplateId = new TemplateId();
+  data: T;
   witnessParties: Party[] = [];
-  argument: T;
   workflowId?: string = undefined;
 
   private constructor(contractId: ContractId<T>, argument: T) {
     this.contractId = contractId;
-    this.argument = argument;
+    this.data = argument;
   }
 
+  /**
+   * Create a `Contract<T>` from its JSON representation. This is intended
+   * for use by the `Ledger` class only.
+   */
   static fromJSON<T>(templateType: Template<T>, json: unknown): Contract<T> {
     const jsonConvert = new JsonConvert();
     jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL;
