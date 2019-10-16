@@ -57,6 +57,10 @@ const MainController: React.FC<Props> = ({ledger}) => {
 
   React.useEffect(() => { loadMyUser(); }, [loadMyUser]);
   React.useEffect(() => { loadAllUsers(); }, [loadAllUsers]);
+  React.useEffect(() => {
+    const interval = setInterval(loadAllUsers, 5000);
+    return () => clearInterval(interval);
+  }, [loadAllUsers]);
 
   const props = {
     myUser,
