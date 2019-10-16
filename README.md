@@ -1,48 +1,123 @@
-**This is a work-in-progress project to create a `create-daml-app` project akin to `create-reac-app`.**
+**DISCLAIMER: This work in progress!**
 
----
+[![DAML logo](daml-logo.png)](https://www.daml.com)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[![Download](https://img.shields.io/github/release/digital-asset/daml.svg?label=Download)](https://docs.daml.com/getting-started/installation.html)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/digital-asset/daml/blob/master/LICENSE)
 
-## Available Scripts
+# Welcome to _Create DAML App_
 
-In the project directory, you can run:
+This repository contains a template to get started with developing full-stack
+[DAML](https://daml.com/) applications. The demo application covers the following aspects:
 
-### `yarn start`
+1. A [DAML](https://docs.daml.com/index.html) model (of a simplistic social network)
+2. Automation using [DAML triggers](https://docs.daml.com/triggers/index.html)
+3. A UI written in [TypeScript](https://www.typescriptlang.org/)
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+The application showcases a variety of experimental DAML SDK features such as
+[DAML triggers](https://docs.daml.com/triggers/index.html) and the
+[HTTP JSON API service](https://docs.daml.com/json-api/index.html).
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+The UI is developed using [React](https://reactjs.org/),
+[Semantic UI](https://react.semantic-ui.com/) and its
+official [React integration](https://react.semantic-ui.com/).
+The whole project was bootstrapped with
+[Create React App](https://github.com/facebook/create-react-app).
+Regardless of these choices, all DAML specific aspects of the UI client are
+written in plain TypeScript and the UI framework should hence be easily
+replacable.
 
-### `yarn test`
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Getting started
 
-### `yarn build`
+Before you can run the application, you need to install the
+[DAML SDK](https://docs.daml.com/getting-started/installation.html) and a
+package manager for JavaScript. For the development of this project we have
+used [yarn](https://yarnpkg.com/en/docs/install), but others might work
+equally well.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+First, you need to obtain a copy of this project, either by clicking the
+"Use this template" button above or by cloning this repository directly via
+```
+git clone https://github.com/hurryabit/create-daml-app.git
+```
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+Once you have copy of this project, you need to install its dependencies
+by calling
+```
+yarn install
+```
+at the root of the repository.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+To start the application, first start a DAML ledger using
+```
+./daml-start.sh
+```
+After this, start the UI server via
+```
+yarn start
+```
+This should open a browser window with a login screen. If it doesn't, you
+can manually point your browser to http://localhost:3000.
 
-### `yarn eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## A quick tour
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+You can log into the app by providing a user name, say `Alice`, clicking
+on the calculator icon to generate an access token for the DAML ledger,
+and finally clicking on "Sign up". You will be greeted by a screen
+indicating that you don't have any friends yet. You can change this by
+adding a friend in the upper box, say `Bob`. Both boxes on the screen
+then reflect the fact that you consider `Bob` a friend. After that, let's
+log out in the top right corner and sign up as `Bob`.
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+As `Bob`, we can see that we don't have any friends yet and that `Alice`
+considers us a friend nevertheless. We can make `Alice` a friend by
+clicking the plus symbol to the right of here name.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-## Learn More
+## Using the automation
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+If you are a very popular and friendly person who is considered a friend
+by many other people and wants to reciprocate that friendship in the
+application, adding all these other people as friends can become quite
+tedious. That is where the automation with DAML triggers mentions above
+becomes handy. To fire up the trigger, we need to execute
+```
+./daml-trigger.sh Alice
+```
+at the root of the repository.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+To see the automation in action, we need to sign up as a new person, say
+`Charlie` and add `Alice` as our friend. If we log out and then log in as
+`Alice` again, we will see that we reciprocate `Charlie`'s friendship and
+consider him our friend too. We didn't have to do anything to get there,
+our DAML trigger has done that for us.
+
+
+## Next steps
+
+There are many directions in which this application can be extended.
+Regardless of which direction you pick, the following files will be the most
+interesting ones to familiarize yourself with:
+
+- [`daml/User.daml`](daml/User.daml): the DAML model of the simplistic
+  social network
+- [`src/daml/User.ts`](src/daml/User.ts): a reflection of the types
+  contained in the DAML model in TypeScript
+- [`src/ledger/Ledger.ts`](src/ledger/Ledger.ts): a TypeScript class to
+  communicate with the Ledger API
+- [`src/components/MainController.tsx`](src/components/MainController.tsx):
+  the React component talking to the Leger API
+- [`daml/Reciprocate.daml`](daml/Reciprocate.daml): the automation using
+  DAML triggers
+
+
+## Useful resources
+
+TBD
+
+
+## How to get help
+
+TBD

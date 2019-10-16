@@ -1,5 +1,5 @@
 daml 1.2
-module Mirror where
+module Reciprocate where
 
 import Daml.Trigger
 import DA.List qualified as List
