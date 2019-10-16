@@ -1,13 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import MainView from './MainView';
 import Ledger from '../ledger/Ledger';
 import { Party } from '../ledger/Types';
 import { User } from '../daml/User';
-
-const useAsyncEffect = (fn: () => Promise<void>, obs: unknown[]) => {
-  const fn_ = () => { fn(); };
-  useEffect(fn_, obs);
-}
 
 type Props = {
   ledger: Ledger;
@@ -40,16 +35,16 @@ const MainController: React.FC<Props> = ({ledger}) => {
     }
   }
 
-  const loadMyUser = async () => {
+  const loadMyUser = React.useCallback(async () => {
     try {
       const user = await ledger.pseudoFetchByKey(User, {party: ledger.party()});
       setMyUser(user.argument);
     } catch (error) {
       alert("Unknown error:\n" + error);
     }
-  }
+  }, [ledger]);
 
-  const loadAllUsers = async () => {
+  const loadAllUsers = React.useCallback(async () => {
     try {
       const allUserContracts = await ledger.fetchAll(User);
       const allUsers = allUserContracts.map((user) => user.argument);
@@ -58,10 +53,10 @@ const MainController: React.FC<Props> = ({ledger}) => {
     } catch (error) {
       alert("Unknown error:\n" + error);
     }
-  }
+  }, [ledger]);
 
-  useAsyncEffect(loadMyUser, []);
-  useAsyncEffect(loadAllUsers, []);
+  React.useEffect(() => { loadMyUser(); }, [loadMyUser]);
+  React.useEffect(() => { loadAllUsers(); }, [loadAllUsers]);
 
   const props = {
     myUser,
