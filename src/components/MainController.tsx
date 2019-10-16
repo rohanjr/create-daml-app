@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import MainView from './MainView';
-import Credentials from '../ledger/Credentials';
 import Ledger from '../ledger/Ledger';
 import { Party } from '../ledger/Types';
 import { User } from '../daml/User';
@@ -11,20 +10,19 @@ const useAsyncEffect = (fn: () => Promise<void>, obs: unknown[]) => {
 }
 
 type Props = {
-  credentials: Credentials;
+  ledger: Ledger;
 }
 
 /**
  * React component to control the `MainView`.
  */
-const MainController: React.FC<Props> = ({credentials}) => {
-  const ledger = new Ledger(credentials);
+const MainController: React.FC<Props> = ({ledger}) => {
   const [myUser, setMyUser] = React.useState<User>({party: '', friends: []});
   const [allUsers, setAllUsers] = React.useState<User[]>([]);
 
   const addFriend = async (friend: Party): Promise<boolean> => {
     try {
-      await ledger.pseudoExerciseByKey(User.AddFriend, {party: credentials.username}, {friend});
+      await ledger.pseudoExerciseByKey(User.AddFriend, {party: ledger.party()}, {friend});
       await Promise.all([loadMyUser(), loadAllUsers()]);
       return true;
     } catch (error) {
@@ -35,7 +33,7 @@ const MainController: React.FC<Props> = ({credentials}) => {
 
   const removeFriend = async (friend: Party): Promise<void> => {
     try {
-      await ledger.pseudoExerciseByKey(User.RemoveFriend, {party: credentials.username}, {friend});
+      await ledger.pseudoExerciseByKey(User.RemoveFriend, {party: ledger.party()}, {friend});
       await Promise.all([loadMyUser(), loadAllUsers()]);
     } catch (error) {
       alert("Unknown error:\n" + JSON.stringify(error));
@@ -44,7 +42,7 @@ const MainController: React.FC<Props> = ({credentials}) => {
 
   const loadMyUser = async () => {
     try {
-      const user = await ledger.pseudoFetchByKey(User, {party: credentials.username});
+      const user = await ledger.pseudoFetchByKey(User, {party: ledger.party()});
       setMyUser(user.argument);
     } catch (error) {
       alert("Unknown error:\n" + error);

@@ -20,11 +20,13 @@ class LedgerError {
 }
 
 class Ledger {
-  readonly credentials: Credentials;
+  private readonly credentials: Credentials;
 
   constructor(credentials: Credentials) {
     this.credentials = credentials;
   }
+
+  party = () => this.credentials.username;
 
   private async submit(method: string, payload: unknown): Promise<unknown> {
     const jsonConvert = new JsonConvert();

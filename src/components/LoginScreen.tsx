@@ -5,7 +5,7 @@ import Ledger from '../ledger/Ledger';
 import { User } from '../daml/User';
 
 type Props = {
-  onLogin: (credentials: Credentials) => void;
+  onLogin: (ledger: Ledger) => void;
 }
 
 /**
@@ -24,14 +24,14 @@ const LoginScreen: React.FC<Props> = ({onLogin}) => {
         alert('Wrong password.');
         return;
       }
-      let credentials = {username, password, contractId: ''};
+      let credentials: Credentials = {username, password};
       const ledger = new Ledger(credentials);
       const user = await ledger.pseudoLookupByKey(User, {party: username});
       if (user === undefined) {
         alert("You have not yet signed up.");
         return;
       }
-      onLogin(credentials);
+      onLogin(ledger);
     } catch(error) {
       alert("Unknown error:\n" + error);
     }
@@ -53,14 +53,13 @@ const LoginScreen: React.FC<Props> = ({onLogin}) => {
           return;
         }
       }
-      alert("Unknown error:\n" + JSON.stringify(error));
+      alert("Unknown error:\n" + error);
     }
   }
 
   const handleCalculatePassword = (event: React.FormEvent) => {
     event.preventDefault();
     const password = passwordFor(username);
-    console.log(password);
     setPassword(password);
   }
 

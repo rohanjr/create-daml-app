@@ -1,17 +1,17 @@
 import React from 'react'
 import { Image, Menu } from 'semantic-ui-react'
-import Credentials from '../ledger/Credentials';
+import Ledger from '../ledger/Ledger';
 import MainController from './MainController';
 
 type Props = {
-  credentials: Credentials;
+  ledger: Ledger;
   onLogout: () => void;
 }
 
 /**
  * React component for the main screen of the `App`.
  */
-const MainScreen: React.FC<Props> = ({credentials, onLogout}) => {
+const MainScreen: React.FC<Props> = ({ledger, onLogout}) => {
   return (
     <>
       <Menu icon borderless>
@@ -27,7 +27,7 @@ const MainScreen: React.FC<Props> = ({credentials, onLogout}) => {
         </Menu.Item>
         <Menu.Menu position='right'>
           <Menu.Item position='right'>
-            You are logged in as {credentials.username}.
+            You are logged in as {ledger.party()}.
           </Menu.Item>
           <Menu.Item
             position='right'
@@ -38,7 +38,7 @@ const MainScreen: React.FC<Props> = ({credentials, onLogout}) => {
         </Menu.Menu>
       </Menu>
 
-      <MainController credentials={credentials}/>
+      <MainController ledger={ledger}/>
     </>
   );
 };

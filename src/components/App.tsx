@@ -1,25 +1,25 @@
 import React from 'react';
 import LoginScreen from './LoginScreen';
 import MainScreen from './MainScreen';
-import Credentials from '../ledger/Credentials';
+import Ledger from '../ledger/Ledger';
 
 /**
  * React component for the entry point into the application.
  */
 const App: React.FC = () => {
-  const [credentials, setCredentials] = React.useState<Credentials | undefined>(undefined);
+  const [ledger, setLedger] = React.useState<Ledger | undefined>(undefined);
 
-  if (credentials === undefined) {
+  if (ledger === undefined) {
     return (
       <LoginScreen
-        onLogin={(credentials) => setCredentials(credentials)}
+        onLogin={(ledger) => setLedger(ledger)}
       />
     );
   } else {
     return (
       <MainScreen
-        credentials={credentials}
-        onLogout={() => setCredentials(undefined)}
+        ledger={ledger}
+        onLogout={() => setLedger(undefined)}
       />
     );
   }
