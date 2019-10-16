@@ -1,14 +1,14 @@
-sdk-version: 0.13.29
+sdk-version: 0.13.30
 name: create-daml-app
 version: 0.1.0
-source: daml/User.daml
-# scenario: Main:mainScenario
+source: daml
 parties:
 - Alice
 - Bob
-- Carl
-exposed-modules:
-- User
+- Charlie
+build-options:
+- --target=1.dev
 dependencies:
 - daml-prim
 - daml-stdlib
+- daml-trigger
