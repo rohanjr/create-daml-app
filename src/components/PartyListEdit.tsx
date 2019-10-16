@@ -14,12 +14,15 @@ type Props = {
  */
 const PartyListEdit: React.FC<Props> = ({parties, onAddParty, onRemoveParty}) => {
   const [newParty, setNewParty] = React.useState('');
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const addParty = async (event?: React.FormEvent) => {
     if (event) {
       event.preventDefault();
     }
+    setIsSubmitting(true);
     const success = await onAddParty(newParty);
+    setIsSubmitting(false);
     if (success) {
       setNewParty('');
     }
@@ -51,6 +54,8 @@ const PartyListEdit: React.FC<Props> = ({parties, onAddParty, onRemoveParty}) =>
           <Input
             fluid
             transparent
+            readOnly={isSubmitting}
+            loading={isSubmitting}
             size='small'
             placeholder='Add friend'
             value={newParty}
