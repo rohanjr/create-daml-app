@@ -26,7 +26,7 @@ class Ledger {
     this.credentials = credentials;
   }
 
-  party = () => this.credentials.username;
+  party = () => this.credentials.party;
 
   private async submit(method: string, payload: unknown): Promise<unknown> {
     const jsonConvert = new JsonConvert();
@@ -34,7 +34,7 @@ class Ledger {
     const httpResponse = await fetch(method, {
       body: JSON.stringify(payload),
       headers: {
-        'Authorization': 'Bearer ' + this.credentials.password,
+        'Authorization': 'Bearer ' + this.credentials.token,
         'Content-type': 'application/json'
       },
       method: 'post',

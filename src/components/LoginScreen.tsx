@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button, Form, Grid, Header, Image, Segment } from 'semantic-ui-react'
-import Credentials, { passwordFor } from '../ledger/Credentials';
+import Credentials, { computeToken } from '../ledger/Credentials';
 import Ledger from '../ledger/Ledger';
 import { User } from '../daml/User';
 
@@ -20,11 +20,11 @@ const LoginScreen: React.FC<Props> = ({onLogin}) => {
       if (event) {
         event.preventDefault();
       }
-      if (password !== passwordFor(username)) {
+      if (password !== computeToken(username)) {
         alert('Wrong password.');
         return;
       }
-      let credentials: Credentials = {username, password};
+      let credentials: Credentials = {party: username, token: password};
       const ledger = new Ledger(credentials);
       const user = await ledger.pseudoLookupByKey(User, {party: username});
       if (user === undefined) {
@@ -40,7 +40,7 @@ const LoginScreen: React.FC<Props> = ({onLogin}) => {
   const handleSignup = async (event: React.FormEvent) => {
     try {
       event.preventDefault();
-      let credentials = {username, password, contractId: ''};
+      let credentials: Credentials = {party: username, token: password};
       const ledger = new Ledger(credentials);
       const user: User = {party: username, friends: []};
       await ledger.create(User, user);
@@ -59,7 +59,7 @@ const LoginScreen: React.FC<Props> = ({onLogin}) => {
 
   const handleCalculatePassword = (event: React.FormEvent) => {
     event.preventDefault();
-    const password = passwordFor(username);
+    const password = computeToken(username);
     setPassword(password);
   }
 

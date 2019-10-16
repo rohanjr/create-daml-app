@@ -6,7 +6,7 @@ export const APPLICATION_ID: string = 'create-daml-app';
 
 export const SECRECT_KEY: string = 'secret';
 
-export function passwordFor(party: string): string {
+export function computeToken(party: string): string {
   const payload = {
     ledgerId: LEDGER_ID,
     applicationId: APPLICATION_ID,
@@ -16,8 +16,8 @@ export function passwordFor(party: string): string {
 }
 
 export type Credentials = {
-  username: string;
-  password: string;
+  party: string;
+  token: string;
 }
 
 export default Credentials;
