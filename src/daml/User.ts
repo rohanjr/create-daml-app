@@ -28,12 +28,27 @@ class RemoveFriend {
 
   static choiceName = 'RemoveFriend';
 
-  static toJSON(addFriend: AddFriend): unknown {
+  static toJSON(removeFriend: RemoveFriend): unknown {
     const jsonConvert = new JsonConvert();
     jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL;
     // TODO(MH): For some reason the conversion to JSON does not work right now.
     jsonConvert.operationMode = OperationMode.DISABLE;
-    return jsonConvert.serializeObject<AddFriend>(addFriend);
+    return jsonConvert.serializeObject<RemoveFriend>(removeFriend);
+  }
+}
+
+@JsonObject("User.Delete")
+class Delete {
+  static template = undefined as unknown as typeof User;
+
+  static choiceName = 'Delete';
+
+  static toJSON(delete_: Delete): unknown {
+    const jsonConvert = new JsonConvert();
+    jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL;
+    // TODO(MH): For some reason the conversion to JSON does not work right now.
+    jsonConvert.operationMode = OperationMode.DISABLE;
+    return jsonConvert.serializeObject<Delete>(delete_);
   }
 }
 
@@ -63,8 +78,12 @@ export class User {
   static AddFriend = AddFriend;
 
   static RemoveFriend = RemoveFriend;
+
+  static Delete = Delete;
 }
 
 AddFriend.template = User;
 
 RemoveFriend.template = User;
+
+Delete.template = User;

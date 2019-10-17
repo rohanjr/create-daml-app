@@ -20,4 +20,9 @@ export type Credentials = {
   token: string;
 }
 
+export const computeCredentials = (party: string): Credentials => {
+  const token = computeToken(party);
+  return {party, token};
+}
+
 export default Credentials;

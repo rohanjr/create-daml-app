@@ -1,6 +1,6 @@
 import { Any, JsonObject, JsonProperty, JsonConvert, ValueCheckingMode } from "json2typescript";
 import Credentials from './Credentials';
-import { Choice, Contract, ContractId, Party, Template } from './Types';
+import { Archive, Choice, Contract, ContractId, Party, Template } from './Types';
 
 
 @JsonObject("Ledger.Response")
@@ -137,6 +137,20 @@ class Ledger {
   async pseudoExerciseByKey<T, C>(choice: Choice<T, C>, key: unknown, argument: C): Promise<unknown> {
     const contract = await this.pseudoFetchByKey(choice.template, key);
     return this.exercise(choice, contract.contractId, argument);
+  }
+
+  /**
+   * Archive a contract given by its contract id.
+   */
+  async archive<T>(template: Template<T>, contractId: ContractId<T>): Promise<unknown> {
+    return this.exercise(Archive(template), contractId, {});
+  }
+
+  /**
+   * Archive a contract given by its contract id.
+   */
+  async pseudoArchiveByKey<T>(template: Template<T>, key: unknown): Promise<unknown> {
+    return this.pseudoExerciseByKey(Archive(template), key, {});
   }
 
   static Error = LedgerError;

@@ -33,6 +33,16 @@ export interface Choice<T, C> {
   toJSON(c: C): unknown;
 }
 
+export const Archive = <T>(template: Template<T>): Choice<T, {}> => {
+  return {
+    template,
+    choiceName: 'Archive',
+    toJSON: (_: {}): {} => {
+      return {};
+    },
+  };
+}
+
 /**
  * The counterpart of DAML's `Party` type.
  */
