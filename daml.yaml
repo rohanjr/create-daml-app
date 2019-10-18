@@ -1,4 +1,4 @@
-sdk-version: 0.13.30
+sdk-version: 0.13.31
 name: create-daml-app
 version: 0.1.0
 source: daml
