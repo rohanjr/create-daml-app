@@ -5,7 +5,8 @@ ENV DAML_SDK_VERSION=0.13.31
 
 RUN apt-get update -qq && apt-get install -qq --no-install-recommends \
   curl \
-  gnupg2
+  gnupg2 \
+  netcat
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 

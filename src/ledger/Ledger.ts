@@ -50,6 +50,7 @@ class Ledger {
     });
     const json = await httpResponse.json();
     if (!httpResponse.ok) {
+      console.log(json);
       throw jsonConvert.deserialize(json, LedgerError);
     }
     const ledgerResponse = jsonConvert.deserializeObject(json, LedgerResponse);

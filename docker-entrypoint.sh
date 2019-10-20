@@ -1,13 +1,26 @@
 #!/bin/bash
-set -euxo pipefail
+set -euo pipefail
+set -m
 
-LOG=$HOME/var/log/all
-mkdir -p $(dirname $LOG)
-echo "Starting create-daml-app..." > $LOG
+LEDGER_HOST=localhost
+LEDGER_PORT=6865
 
 service nginx start
 
-./daml-start.sh >> $LOG &
-sleep 10 && ./daml-trigger.sh Alice >> $LOG &
+./daml-start.sh \
+  --sandbox-option --sql-backend-jdbcurl \
+  --sandbox-option "$DATABASE_JDBC_URL" \
+  &
 
-exec tail -f $LOG
+sleep 5
+until nc -z $LEDGER_HOST $LEDGER_PORT; do
+  echo "Waiting for sandbox."
+  sleep 1
+done
+echo "Connected to sandbox."
+
+daml deploy --host $LEDGER_HOST --port $LEDGER_PORT
+
+./daml-trigger.sh Alice &
+
+fg %1
