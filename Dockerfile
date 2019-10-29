@@ -1,7 +1,7 @@
 # This file is based on https://github.com/timbru31/docker-java-node.
 FROM openjdk:8-jre-slim-buster
 
-ENV DAML_SDK_VERSION=0.13.31
+ENV DAML_SDK_VERSION=0.13.32
 
 RUN apt-get update -qq && apt-get install -qq --no-install-recommends \
   curl \
