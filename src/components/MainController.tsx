@@ -12,7 +12,7 @@ type Props = {
  * React component to control the `MainView`.
  */
 const MainController: React.FC<Props> = ({ledger}) => {
-  const [myUser, setMyUser] = React.useState<User>({party: '', friends: []});
+  const [myUser, setMyUser] = React.useState<User>({party: '', friends: [], goals: []});
   const [allUsers, setAllUsers] = React.useState<User[]>([]);
 
   const addFriend = async (friend: Party): Promise<boolean> => {

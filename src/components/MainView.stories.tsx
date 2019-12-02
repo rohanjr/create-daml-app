@@ -18,9 +18,9 @@ const makeProps = (user: User, allUsers: User[]): Props => ({
   onReloadAllUsers: loadAllUsers,
 })
 
-const alice: User = { party: 'Alice', friends: ['Bob', 'Charlie']};
-const bob: User = { party: 'Bob', friends: ['Dave']};
-const charlie: User = { party: 'Charlie', friends: []}
+const alice: User = { party: 'Alice', friends: ['Bob', 'Charlie'], goals: []};
+const bob: User = { party: 'Bob', friends: ['Dave'], goals: []};
+const charlie: User = { party: 'Charlie', friends: [], goals: []};
 
 storiesOf("MainView", module)
   .add("default", () => (

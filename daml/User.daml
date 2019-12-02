@@ -3,9 +3,12 @@ module User where
 
 import DA.List
 
+import Goal
+
 template User with
     party: Party
     friends: [Party]
+    goals: [Goal]
   where
     signatory party
     observer friends

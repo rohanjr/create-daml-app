@@ -9,11 +9,11 @@ const expectData = <T>(contracts: Contract<T>[]) =>
 it('basic workflow', async () => {
   const testId: number = Math.floor(Math.random() * 1000000);
   const ledger = new Ledger(computeCredentials('user-' + testId.toString()));
-  const user: User = {party: ledger.party(), friends: []};
+  const user: User = {party: ledger.party(), friends: [], goals: []};
   const userKey = {party: user.party};
-  const other: User = {party: 'other-' + testId.toString(), friends: []};
+  const other: User = {party: 'other-' + testId.toString(), friends: [], goals: []};
   const otherKey = {party: other.party};
-  const userWithFriend: User = {party: user.party, friends: [other.party]};
+  const userWithFriend: User = {party: user.party, friends: [other.party], goals: []};
 
   const userContract = await ledger.create(User, user);
   expect(userContract.data).toEqual(user);

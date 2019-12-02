@@ -1,5 +1,6 @@
 import {JsonObject, JsonProperty, JsonConvert, ValueCheckingMode, OperationMode} from "json2typescript";
 import { Party, TemplateId } from "../ledger/Types";
+import { Goal } from "./Goal";
 
 @JsonObject("User.AddFriend")
 class AddFriend {
@@ -58,6 +59,8 @@ export class User {
   party: Party = '';
   @JsonProperty("friends", [Party])
   friends: Party[] = [];
+  @JsonProperty("goals", [Goal])
+  goals: Goal[] = [];
 
   static templateId: TemplateId = {moduleName: "User", entityName: "User"};
 
