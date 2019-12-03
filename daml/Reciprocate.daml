@@ -11,11 +11,12 @@ trigger = runTrigger $ Trigger
   { initialize = \_acs -> ()
   , updateState = \_acs _message () -> ()
   , rule
+  , registeredTemplates = AllInDar
   }
   where
     rule : Party -> ACS -> Map.Map CommandId [Command] -> () -> TriggerA ()
     rule party acs commandsInFlight () = do
-      let users = getTemplates @User acs
+      let users = getContracts @User acs
       case List.find (\(_, user) -> user.party == party) users of
         None -> pure ()
         Some (myUserId, myUser) -> do
@@ -24,5 +25,5 @@ trigger = runTrigger $ Trigger
           case List.filter (shouldBefriend . snd) users of
             [] -> pure ()
             (_, userToBefriend) :: _ -> do
-              emitCommands [exerciseCmd @User myUserId (AddFriend userToBefriend.party)]
+              emitCommands [exerciseCmd @User myUserId (AddFriend userToBefriend.party)] []
               pure ()

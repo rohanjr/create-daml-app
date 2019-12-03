@@ -4,7 +4,7 @@ export const LEDGER_ID: string = 'create-daml-app-sandbox';
 
 export const APPLICATION_ID: string = 'create-daml-app';
 
-export const SECRECT_KEY: string = 'secret';
+export const SECRET_KEY: string = 'secret';
 
 export function computeToken(party: string): string {
   const payload = {
@@ -12,7 +12,7 @@ export function computeToken(party: string): string {
     applicationId: APPLICATION_ID,
     party,
   };
-  return encode(payload, SECRECT_KEY, 'HS256');
+  return encode(payload, SECRET_KEY, 'HS256');
 }
 
 export type Credentials = {
