@@ -62,10 +62,14 @@ class Ledger {
    * https://github.com/digital-asset/daml/blob/master/docs/source/json-api/search-query-language.rst
    * for a description of the query language.
    */
-  async query<T>(template: Template<T>, query: unknown): Promise<Contract<T>[]> {
+  async query<T>(template: Template<T>, query: object): Promise<Contract<T>[]> {
     const payload = {"%templates": [template.templateId]};
+    console.log('Template: ' + JSON.stringify(payload));
+    console.log('Query: ' + JSON.stringify(query));
     Object.assign(payload, query);
+    console.log('Starting query: ' + JSON.stringify(payload));
     const json = await this.submit('contracts/search', payload);
+    console.log('Submitted command');
     if (!(json instanceof Array)) {
       throw new Error('query: submit did not return an array');
     }
@@ -84,7 +88,8 @@ class Ledger {
    * Mimic DAML's `lookupByKey`. The `key` must be a formulation of the
    * contract key as a query.
    */
-  async pseudoLookupByKey<T>(template: Template<T>, key: unknown): Promise<Contract<T> | undefined> {
+  async pseudoLookupByKey<T>(template: Template<T>, key: object): Promise<Contract<T> | undefined> {
+    console.log('Looking up by key ' + JSON.stringify(key));
     const contracts = await this.query(template, key);
     if (contracts.length > 1) {
       throw new Error("pseudoLookupByKey: query returned multiple contracts");
@@ -96,7 +101,7 @@ class Ledger {
    * Mimic DAML's `fetchByKey`. The `key` must be a formulation of the
    * contract key as a query.
    */
-  async pseudoFetchByKey<T>(template: Template<T>, key: unknown): Promise<Contract<T>> {
+  async pseudoFetchByKey<T>(template: Template<T>, key: object): Promise<Contract<T>> {
     const contract = await this.pseudoLookupByKey(template, key);
     if (contract === undefined) {
       throw new Error("pseudoFetchByKey: query returned no contract");
@@ -135,8 +140,10 @@ class Ledger {
    * Mimic DAML's `exerciseByKey`. The `key` must be a formulation of the
    * contract key as a query.
    */
-  async pseudoExerciseByKey<T, C>(choice: Choice<T, C>, key: unknown, argument: C): Promise<unknown> {
+  async pseudoExerciseByKey<T, C>(choice: Choice<T, C>, key: object, argument: C): Promise<unknown> {
+    console.log('Exercising by key ' + JSON.stringify(key));
     const contract = await this.pseudoFetchByKey(choice.template, key);
+    console.log('Exercising choice: ' + JSON.stringify(choice) + ' with arg ' + JSON.stringify(argument));
     return this.exercise(choice, contract.contractId, argument);
   }
 
@@ -150,7 +157,7 @@ class Ledger {
   /**
    * Archive a contract given by its contract id.
    */
-  async pseudoArchiveByKey<T>(template: Template<T>, key: unknown): Promise<unknown> {
+  async pseudoArchiveByKey<T>(template: Template<T>, key: object): Promise<unknown> {
     return this.pseudoExerciseByKey(Archive(template), key, {});
   }
 

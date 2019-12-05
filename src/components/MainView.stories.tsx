@@ -1,11 +1,12 @@
 import { storiesOf } from '@storybook/react';
 import React from 'react';
 import MainView, { Props } from "./MainView";
-import { Party } from '../ledger/Types';
+import { Party, Text } from '../ledger/Types';
 import { User } from '../daml/User';
 
 const addFriend = async (friend: Party): Promise<boolean> => { alert('Add friend: ' + friend); return true; }
 const removeFriend = async (friend: Party) => { alert('Remove friend: ' + friend); }
+const addGoal = async (goal: Text): Promise<boolean> => { alert('Add goal: ' + goal); return true; }
 const reloadMyUser = () => { alert('Load my user'); }
 const loadAllUsers = () => { alert('Load all users'); }
 
@@ -14,6 +15,7 @@ const makeProps = (user: User, allUsers: User[]): Props => ({
   allUsers,
   onAddFriend: addFriend,
   onRemoveFriend: removeFriend,
+  onAddGoal: addGoal,
   onReloadMyUser: reloadMyUser,
   onReloadAllUsers: loadAllUsers,
 })

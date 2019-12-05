@@ -1,5 +1,5 @@
 import {JsonObject, JsonProperty, JsonConvert, ValueCheckingMode, OperationMode} from "json2typescript";
-import { Party, TemplateId } from "../ledger/Types";
+import { Party, Text, TemplateId } from "../ledger/Types";
 import { Goal } from "./Goal";
 
 @JsonObject("User.AddFriend")
@@ -35,6 +35,24 @@ class RemoveFriend {
     // TODO(MH): For some reason the conversion to JSON does not work right now.
     jsonConvert.operationMode = OperationMode.DISABLE;
     return jsonConvert.serializeObject<RemoveFriend>(removeFriend);
+  }
+}
+
+@JsonObject("User.AddGoal")
+class AddGoal {
+  @JsonProperty("goal", Text)
+  goal: Text = '';
+
+  static template = undefined as unknown as typeof User;
+
+  static choiceName = 'AddGoal';
+
+  static toJSON(addGoal: AddGoal): unknown {
+    const jsonConvert = new JsonConvert();
+    jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL;
+    // TODO(MH): For some reason the conversion to JSON does not work right now.
+    jsonConvert.operationMode = OperationMode.DISABLE;
+    return jsonConvert.serializeObject<AddGoal>(addGoal);
   }
 }
 
@@ -81,6 +99,8 @@ export class User {
   static AddFriend = AddFriend;
 
   static RemoveFriend = RemoveFriend;
+
+  static AddGoal = AddGoal;
 
   static Delete = Delete;
 }

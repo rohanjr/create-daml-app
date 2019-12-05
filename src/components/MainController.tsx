@@ -1,7 +1,7 @@
 import React from 'react';
 import MainView from './MainView';
 import Ledger from '../ledger/Ledger';
-import { Party } from '../ledger/Types';
+import { Party, Text } from '../ledger/Types';
 import { User } from '../daml/User';
 
 type Props = {
@@ -32,6 +32,18 @@ const MainController: React.FC<Props> = ({ledger}) => {
       await Promise.all([loadMyUser(), loadAllUsers()]);
     } catch (error) {
       alert("Unknown error:\n" + JSON.stringify(error));
+    }
+  }
+
+  const addGoal = async (goal: Text): Promise<boolean> => {
+    try {
+      await ledger.pseudoExerciseByKey(User.AddGoal, {party: ledger.party()}, {goal});
+      await Promise.all([loadMyUser(), loadAllUsers()]);
+      return true;
+    } catch (error) {
+      alert("Error adding goal:\n" + JSON.stringify(error) +
+        "\nParty: " + ledger.party() + "\nGoal: " + goal);
+      return false;
     }
   }
 
@@ -67,6 +79,7 @@ const MainController: React.FC<Props> = ({ledger}) => {
     allUsers,
     onAddFriend: addFriend,
     onRemoveFriend: removeFriend,
+    onAddGoal: addGoal,
     onReloadMyUser: loadMyUser,
     onReloadAllUsers: loadAllUsers,
   };

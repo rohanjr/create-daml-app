@@ -1,15 +1,17 @@
 import React from 'react';
 import { Container, Grid, Header, Icon, Segment, Divider } from 'semantic-ui-react';
 import PartyListEdit from './PartyListEdit';
+import GoalListEdit from './GoalListEdit';
 import UserList from './UserList';
 import { User } from '../daml/User';
-import { Party } from '../ledger/Types';
+import { Party, Text } from '../ledger/Types';
 
 export type Props = {
   myUser: User;
   allUsers: User[];
   onAddFriend: (friend: Party) => Promise<boolean>;
   onRemoveFriend: (friend: Party) => Promise<void>;
+  onAddGoal: (goal: Text) => Promise<boolean>;
   onReloadMyUser: () => void;
   onReloadAllUsers: () => void;
 }
@@ -42,6 +44,21 @@ const MainView: React.FC<Props> = (props) => {
                 onRemoveParty={props.onRemoveFriend}
               />
             </Segment>
+
+            <Segment>
+              <Header as='h2'>
+                <Icon name='user' />
+                <Header.Content>
+                  Goals
+                </Header.Content>
+              </Header>
+              <Divider />
+              <GoalListEdit
+                goals={props.myUser.goals}
+                onAddGoal={props.onAddGoal}
+              />
+            </Segment>
+
             <Segment>
               <Header as='h2'>
                 <Icon name='globe' />
