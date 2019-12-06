@@ -3,6 +3,7 @@ import MainView from './MainView';
 import Ledger from '../ledger/Ledger';
 import { Party, Text } from '../ledger/Types';
 import { User } from '../daml/User';
+import { Goal } from '../daml/Goal';
 
 type Props = {
   ledger: Ledger;
@@ -14,6 +15,7 @@ type Props = {
 const MainController: React.FC<Props> = ({ledger}) => {
   const [myUser, setMyUser] = React.useState<User>({party: '', friends: [], goals: []});
   const [allUsers, setAllUsers] = React.useState<User[]>([]);
+  const [myGoals, setMyGoals] = React.useState<Goal[]>([]);
 
   const addFriend = async (friend: Party): Promise<boolean> => {
     try {
@@ -67,21 +69,33 @@ const MainController: React.FC<Props> = ({ledger}) => {
     }
   }, [ledger]);
 
+  const loadMyGoals = React.useCallback(async () => {
+    try {
+      const goals = await ledger.query(Goal, {party: ledger.party()});
+      setMyGoals(goals.map((goal) => goal.data));
+    } catch (error) {
+      alert("Error loading your goals:\n" + error);
+    }
+  }, [ledger]);
+
   React.useEffect(() => { loadMyUser(); }, [loadMyUser]);
   React.useEffect(() => { loadAllUsers(); }, [loadAllUsers]);
   React.useEffect(() => {
     const interval = setInterval(loadAllUsers, 5000);
     return () => clearInterval(interval);
   }, [loadAllUsers]);
+  React.useEffect(() => { loadMyGoals(); }, [loadMyGoals]);
 
   const props = {
     myUser,
     allUsers,
+    myGoals,
     onAddFriend: addFriend,
     onRemoveFriend: removeFriend,
     onAddGoal: addGoal,
     onReloadMyUser: loadMyUser,
     onReloadAllUsers: loadAllUsers,
+    onReloadMyGoals: loadMyGoals,
   };
 
   return MainView(props);

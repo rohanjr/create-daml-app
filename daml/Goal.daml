@@ -6,19 +6,15 @@ import DA.Text
 template Goal with
     party: Party  -- ^ The goal setter
     pledge: Text  -- ^ The goal, e.g. "write some code"
-    duration: Int -- ^ The remaining number of days the goal should last
   where
     signatory party
+    key (party, pledge): (Party, Text)
+    maintainer key._1
 
     agreement unlines
       [ "I, "
       , show party
       , ", pledge to "
       , pledge
-      , " for "
-      , show duration
-      , " days."
+      , "."
       ]
-
-    key (party, pledge): (Party, Text)
-    maintainer key._1

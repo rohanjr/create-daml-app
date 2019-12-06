@@ -1,5 +1,5 @@
 import {JsonObject, JsonProperty, JsonConvert, ValueCheckingMode, OperationMode} from "json2typescript";
-import { Party, Text, Int, TemplateId } from "../ledger/Types";
+import { Party, Text, TemplateId } from "../ledger/Types";
 
 @JsonObject("Goal")
 export class Goal {
@@ -7,8 +7,6 @@ export class Goal {
   party: Party = '';
   @JsonProperty("pledge", Text)
   pledge: Text = '';
-  @JsonProperty("duration", Int)
-  duration: Int = 0;
 
   static templateId: TemplateId = {moduleName: "Goal", entityName: "Goal"};
 
