@@ -47,7 +47,7 @@ const MainView: React.FC<Props> = (props) => {
 
             <Segment>
               <Header as='h2'>
-                <Icon name='user' />
+                <Icon name='star' />
                 <Header.Content>
                   Goals
                 </Header.Content>

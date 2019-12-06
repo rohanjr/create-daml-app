@@ -33,9 +33,9 @@ const GoalListEdit: React.FC<Props> = ({goals, onAddGoal}) => {
       {goals.map((goal) =>
         <ListActionItem
           key={goal}
-          icon='user outline'
+          icon='pencil'
           action={{
-            icon: 'remove user',
+            icon: 'remove',
             onClick: () => { return; } //onRemoveGoal(goal)
           }}
         >
@@ -44,9 +44,9 @@ const GoalListEdit: React.FC<Props> = ({goals, onAddGoal}) => {
       )}
       <ListActionItem
         key='add goal'
-        icon='user outline'
+        icon='pencil'
         action={{
-          icon: 'add user',
+          icon: 'add',
           onClick: () => addGoal(),
         }}
       >
