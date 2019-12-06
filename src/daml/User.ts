@@ -77,8 +77,8 @@ export class User {
   party: Party = '';
   @JsonProperty("friends", [Party])
   friends: Party[] = [];
-  @JsonProperty("goals", [Goal])
-  goals: Goal[] = [];
+  @JsonProperty("goals", [Text])
+  goals: Text[] = [];
 
   static templateId: TemplateId = {moduleName: "User", entityName: "User"};
 
@@ -108,5 +108,7 @@ export class User {
 AddFriend.template = User;
 
 RemoveFriend.template = User;
+
+AddGoal.template = User;
 
 Delete.template = User;

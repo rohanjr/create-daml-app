@@ -5,7 +5,7 @@ import { Text } from '../ledger/Types';
 import { Goal } from '../daml/Goal'
 
 type Props = {
-  goals: Goal[];
+  goals: Text[];
   onAddGoal: (goal: Text) => Promise<boolean>;
 }
 

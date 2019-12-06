@@ -8,7 +8,7 @@ import Goal
 template User with
     party: Party
     friends: [Party]
-    goals: [Goal]
+    goals: [Text]
   where
     signatory party
     observer friends
@@ -36,7 +36,7 @@ template User with
         goal: Text
       controller party
       do
-        create this with goals = Goal party goal 1 :: goals
+        create this with goals = goal :: goals
 
     -- NOTE(MH):This is a workaround for issue
     -- https://github.com/digital-asset/daml/issues/3219.
