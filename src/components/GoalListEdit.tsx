@@ -30,6 +30,18 @@ const GoalListEdit: React.FC<Props> = ({goals, onAddGoal}) => {
 
   return (
     <List relaxed>
+      {goals.map((goal) =>
+        <ListActionItem
+          key={goal}
+          icon='user outline'
+          action={{
+            icon: 'remove user',
+            onClick: () => { return; } //onRemoveGoal(goal)
+          }}
+        >
+          <List.Header>{goal}</List.Header>
+        </ListActionItem>
+      )}
       <ListActionItem
         key='add goal'
         icon='user outline'
