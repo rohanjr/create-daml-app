@@ -9,15 +9,18 @@ const removeFriend = async (friend: Party) => { alert('Remove friend: ' + friend
 const addGoal = async (goal: Text): Promise<boolean> => { alert('Add goal: ' + goal); return true; }
 const reloadMyUser = () => { alert('Load my user'); }
 const loadAllUsers = () => { alert('Load all users'); }
+const loadMyGoals = () => {alert('Load my goals'); }
 
 const makeProps = (user: User, allUsers: User[]): Props => ({
   myUser: user,
   allUsers,
+  myGoals: [],
   onAddFriend: addFriend,
   onRemoveFriend: removeFriend,
   onAddGoal: addGoal,
   onReloadMyUser: reloadMyUser,
   onReloadAllUsers: loadAllUsers,
+  onReloadMyGoals: loadMyGoals,
 })
 
 const alice: User = { party: 'Alice', friends: ['Bob', 'Charlie'], goals: []};

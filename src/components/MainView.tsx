@@ -4,16 +4,19 @@ import PartyListEdit from './PartyListEdit';
 import GoalListEdit from './GoalListEdit';
 import UserList from './UserList';
 import { User } from '../daml/User';
+import { Goal } from '../daml/Goal';
 import { Party, Text } from '../ledger/Types';
 
 export type Props = {
   myUser: User;
   allUsers: User[];
+  myGoals: Goal[];
   onAddFriend: (friend: Party) => Promise<boolean>;
   onRemoveFriend: (friend: Party) => Promise<void>;
   onAddGoal: (goal: Text) => Promise<boolean>;
   onReloadMyUser: () => void;
   onReloadAllUsers: () => void;
+  onReloadMyGoals: () => void;
 }
 
 /**
@@ -54,7 +57,7 @@ const MainView: React.FC<Props> = (props) => {
               </Header>
               <Divider />
               <GoalListEdit
-                goals={props.myUser.goals}
+                goals={props.myGoals.map((goal) => goal.pledge)}
                 onAddGoal={props.onAddGoal}
               />
             </Segment>
