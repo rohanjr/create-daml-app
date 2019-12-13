@@ -2,6 +2,7 @@ daml 1.2
 module User where
 
 import DA.List
+import DA.Action
 
 import Goal
 
@@ -37,7 +38,9 @@ template User with
         witness: Optional Party
       controller party
       do
-        create Goal with party; pledge; witness
+        case witness of
+          None -> void $ create Goal with ..
+          Some witness -> void $ create GoalProposal with ..
         create this with goals = pledge :: goals
 
     -- NOTE(MH):This is a workaround for issue

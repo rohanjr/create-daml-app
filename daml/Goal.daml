@@ -9,7 +9,8 @@ template Goal with
     witness: Optional Party
                   -- ^ The party to approve reported progress and completion
   where
-    signatory party
+    signatory party, witness
+
     key (party, pledge): (Party, Text)
     maintainer key._1
 
@@ -26,9 +27,11 @@ template GoalProposal with
     pledge: Text
     witness: Party
   where
-    signatory party, witness
-    key (party, pledge, witness): (Party, Text, Party)
-    maintainer key._1, key._3
+    signatory party
+    observer witness
+
+    key (party, pledge): (Party, Text)
+    maintainer key._1
 
     controller witness can
       Accept: ContractId Goal
