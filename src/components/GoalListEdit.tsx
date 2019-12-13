@@ -12,7 +12,7 @@ type Props = {
  * React component to edit a list of `Party`s.
  */
 const GoalListEdit: React.FC<Props> = ({goals, onAddGoal}) => {
-  const [newGoal, setNewGoal] = React.useState('');
+  const [newGoal, setNewGoal] = React.useState({pledge: '', witness: ''});
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const addGoal = async (event?: React.FormEvent) => {
@@ -20,11 +20,25 @@ const GoalListEdit: React.FC<Props> = ({goals, onAddGoal}) => {
       event.preventDefault();
     }
     setIsSubmitting(true);
-    const success = await onAddGoal(newGoal, null);
+    let newWitness = null;
+    if (newGoal.witness !== '') {
+      newWitness = newGoal.witness;
+    }
+    const success = await onAddGoal(newGoal.pledge, newWitness);
     setIsSubmitting(false);
     if (success) {
-      setNewGoal('');
+      setNewGoal({pledge: '', witness: ''});
     }
+  }
+
+  const setNewGoalPledge = (pledge: Text) => {
+    const witness = newGoal.witness;
+    setNewGoal({pledge, witness});
+  }
+
+  const setNewGoalWitness = (witness: Text) => {
+    const pledge = newGoal.pledge;
+    setNewGoal({pledge, witness});
   }
 
   return (
@@ -50,15 +64,25 @@ const GoalListEdit: React.FC<Props> = ({goals, onAddGoal}) => {
         }}
       >
         <Form onSubmit={addGoal}>
-          <Input
+          Pledge: <Input
             fluid
             transparent
             readOnly={isSubmitting}
             loading={isSubmitting}
             size='small'
-            placeholder='Add goal'
-            value={newGoal}
-            onChange={(event) => setNewGoal(event.currentTarget.value)}
+            placeholder='Add pledge'
+            value={newGoal.pledge}
+            onChange={(event) => setNewGoalPledge(event.currentTarget.value)}
+          />
+          Witness: <Input
+            fluid
+            transparent
+            readOnly={isSubmitting}
+            loading={isSubmitting}
+            size='small'
+            placeholder='Add witness'
+            value={newGoal.witness}
+            onChange={(event) => setNewGoalWitness(event.currentTarget.value)}
           />
         </Form>
       </ListActionItem>
