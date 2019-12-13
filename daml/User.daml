@@ -36,7 +36,7 @@ template User with
         goal: Text
       controller party
       do
-        create Goal with party; pledge = goal
+        create Goal with party; pledge = goal; witness = None
         create this with goals = goal :: goals
 
     -- NOTE(MH):This is a workaround for issue

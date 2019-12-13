@@ -6,6 +6,8 @@ import DA.Text
 template Goal with
     party: Party  -- ^ The goal setter
     pledge: Text  -- ^ The goal, e.g. "write some code"
+    witness: Optional Party
+                  -- ^ The party to approve reported progress and completion
   where
     signatory party
     key (party, pledge): (Party, Text)

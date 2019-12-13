@@ -1,12 +1,11 @@
 import React from 'react'
 import { Form, Input, List } from 'semantic-ui-react';
 import ListActionItem from './ListActionItem';
-import { Text } from '../ledger/Types';
-import { Goal } from '../daml/Goal'
+import { Text, Party } from '../ledger/Types';
 
 type Props = {
   goals: Text[];
-  onAddGoal: (goal: Text) => Promise<boolean>;
+  onAddGoal: (goal: Text, witness: Party | null) => Promise<boolean>;
 }
 
 /**
@@ -21,7 +20,7 @@ const GoalListEdit: React.FC<Props> = ({goals, onAddGoal}) => {
       event.preventDefault();
     }
     setIsSubmitting(true);
-    const success = await onAddGoal(newGoal);
+    const success = await onAddGoal(newGoal, null);
     setIsSubmitting(false);
     if (success) {
       setNewGoal('');

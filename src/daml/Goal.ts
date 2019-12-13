@@ -7,6 +7,8 @@ export class Goal {
   party: Party = '';
   @JsonProperty("pledge", Text)
   pledge: Text = '';
+  @JsonProperty("witness", Party, true)
+  witness: Party | null = null;
 
   static templateId: TemplateId = {moduleName: "Goal", entityName: "Goal"};
 

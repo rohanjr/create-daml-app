@@ -42,6 +42,7 @@ class RemoveFriend {
 class AddGoal {
   @JsonProperty("goal", Text)
   goal: Text = '';
+  witness: Party | null = null;
 
   static template = undefined as unknown as typeof User;
 
