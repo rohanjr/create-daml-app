@@ -20,3 +20,17 @@ template Goal with
       , pledge
       , "."
       ]
+
+template GoalProposal with
+    party: Party
+    pledge: Text
+    witness: Party
+  where
+    signatory party, witness
+    key (party, pledge, witness): (Party, Text, Party)
+    maintainer key._1, key._3
+
+    controller witness can
+      Accept: ContractId Goal
+        do
+          create Goal with party; pledge; witness = Some witness
