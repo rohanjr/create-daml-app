@@ -1,6 +1,5 @@
 import {JsonObject, JsonProperty, JsonConvert, ValueCheckingMode, OperationMode} from "json2typescript";
 import { Party, Text, TemplateId } from "../ledger/Types";
-import { Goal } from "./Goal";
 
 @JsonObject("User.AddFriend")
 class AddFriend {

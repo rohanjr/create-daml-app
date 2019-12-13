@@ -2,16 +2,18 @@ import React from 'react'
 import { Form, Input, List } from 'semantic-ui-react';
 import ListActionItem from './ListActionItem';
 import { Text, Party } from '../ledger/Types';
+import { Goal, GoalProposal } from '../daml/Goal';
 
 type Props = {
-  goals: Text[];
+  goals: Goal[];
+  pendingGoals: GoalProposal[];
   onAddGoal: (pledge: Text, witness: Party | null) => Promise<boolean>;
 }
 
 /**
  * React component to edit a list of `Party`s.
  */
-const GoalListEdit: React.FC<Props> = ({goals, onAddGoal}) => {
+const GoalListEdit: React.FC<Props> = ({goals, pendingGoals, onAddGoal}) => {
   const [newGoal, setNewGoal] = React.useState({pledge: '', witness: ''});
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
@@ -43,16 +45,28 @@ const GoalListEdit: React.FC<Props> = ({goals, onAddGoal}) => {
 
   return (
     <List relaxed>
-      {goals.map((goal) =>
+      Active: {goals.map((goal) =>
         <ListActionItem
-          key={goal}
+          key={goal.pledge}
           icon='pencil'
           action={{
             icon: 'remove',
             onClick: () => { return; } //onRemoveGoal(goal)
           }}
         >
-          <List.Header>{goal}</List.Header>
+          <List.Header>{goal.pledge}</List.Header>
+        </ListActionItem>
+      )}
+      Pending: {pendingGoals.map((goal) =>
+        <ListActionItem
+          key={goal.pledge}
+          icon='pencil'
+          action={{
+            icon: 'remove',
+            onClick: () => { return; } //onRemoveGoal(goal)
+          }}
+        >
+          <List.Header>{goal.pledge + " [awaiting " + goal.witness + "]"}</List.Header>
         </ListActionItem>
       )}
       <ListActionItem

@@ -4,13 +4,14 @@ import PartyListEdit from './PartyListEdit';
 import GoalListEdit from './GoalListEdit';
 import UserList from './UserList';
 import { User } from '../daml/User';
-import { Goal } from '../daml/Goal';
+import { Goal, GoalProposal } from '../daml/Goal';
 import { Party, Text } from '../ledger/Types';
 
 export type Props = {
   myUser: User;
   allUsers: User[];
   myGoals: Goal[];
+  myPendingGoals: GoalProposal[];
   onAddFriend: (friend: Party) => Promise<boolean>;
   onRemoveFriend: (friend: Party) => Promise<void>;
   onAddGoal: (pledge: Text, witness: Party | null) => Promise<boolean>;
@@ -57,7 +58,8 @@ const MainView: React.FC<Props> = (props) => {
               </Header>
               <Divider />
               <GoalListEdit
-                goals={props.myGoals.map((goal) => goal.pledge)}
+                goals={props.myGoals}
+                pendingGoals={props.myPendingGoals}
                 onAddGoal={props.onAddGoal}
               />
             </Segment>
