@@ -5,7 +5,7 @@ import { Text, Party } from '../ledger/Types';
 
 type Props = {
   goals: Text[];
-  onAddGoal: (goal: Text, witness: Party | null) => Promise<boolean>;
+  onAddGoal: (pledge: Text, witness: Party | null) => Promise<boolean>;
 }
 
 /**

@@ -40,8 +40,9 @@ class RemoveFriend {
 
 @JsonObject("User.AddGoal")
 class AddGoal {
-  @JsonProperty("goal", Text)
-  goal: Text = '';
+  @JsonProperty("pledge", Text)
+  pledge: Text = '';
+  //@JsonProperty("witness", Party) -- not sure how to allow null value
   witness: Party | null = null;
 
   static template = undefined as unknown as typeof User;

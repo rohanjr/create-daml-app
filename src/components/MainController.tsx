@@ -37,14 +37,14 @@ const MainController: React.FC<Props> = ({ledger}) => {
     }
   }
 
-  const addGoal = async (goal: Text, witness: Party | null): Promise<boolean> => {
+  const addGoal = async (pledge: Text, witness: Party | null): Promise<boolean> => {
     try {
-      await ledger.pseudoExerciseByKey(User.AddGoal, {party: ledger.party()}, {goal, witness});
+      await ledger.pseudoExerciseByKey(User.AddGoal, {party: ledger.party()}, {pledge, witness});
       await Promise.all([loadMyUser(), loadAllUsers(), loadMyGoals()]);
       return true;
     } catch (error) {
       alert("Error adding goal:\n" + JSON.stringify(error) +
-        "\nParty: " + ledger.party() + "\nGoal: " + goal);
+        "\nParty: " + ledger.party() + "\nGoal: " + pledge);
       return false;
     }
   }

@@ -6,7 +6,7 @@ import { User } from '../daml/User';
 
 const addFriend = async (friend: Party): Promise<boolean> => { alert('Add friend: ' + friend); return true; }
 const removeFriend = async (friend: Party) => { alert('Remove friend: ' + friend); }
-const addGoal = async (goal: Text): Promise<boolean> => { alert('Add goal: ' + goal); return true; }
+const addGoal = async (pledge: Text): Promise<boolean> => { alert('Add goal: ' + pledge); return true; }
 const reloadMyUser = () => { alert('Load my user'); }
 const loadAllUsers = () => { alert('Load all users'); }
 const loadMyGoals = () => {alert('Load my goals'); }

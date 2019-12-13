@@ -13,7 +13,7 @@ export type Props = {
   myGoals: Goal[];
   onAddFriend: (friend: Party) => Promise<boolean>;
   onRemoveFriend: (friend: Party) => Promise<void>;
-  onAddGoal: (goal: Text, witness: Party | null) => Promise<boolean>;
+  onAddGoal: (pledge: Text, witness: Party | null) => Promise<boolean>;
   onReloadMyUser: () => void;
   onReloadAllUsers: () => void;
   onReloadMyGoals: () => void;
