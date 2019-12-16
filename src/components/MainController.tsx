@@ -17,6 +17,8 @@ const MainController: React.FC<Props> = ({ledger}) => {
   const [allUsers, setAllUsers] = React.useState<User[]>([]);
   const [myGoals, setMyGoals] = React.useState<Goal[]>([]);
   const [myPendingGoals, setMyPendingGoals] = React.useState<GoalProposal[]>([]);
+  const [friendGoals, setFriendGoals] = React.useState<Goal[]>([]);
+  const [goalRequests, setGoalRequests] = React.useState<GoalProposal[]>([]);
 
   const addFriend = async (friend: Party): Promise<boolean> => {
     try {
@@ -76,6 +78,10 @@ const MainController: React.FC<Props> = ({ledger}) => {
       setMyGoals(goals.map((goal) => goal.data));
       const pendingGoals = await ledger.query(GoalProposal, {party: ledger.party()});
       setMyPendingGoals(pendingGoals.map((goal) => goal.data));
+      const friendGoals = await ledger.query(Goal, {witness: ledger.party()});
+      setMyGoals(friendGoals.map((goal) => goal.data));
+      const reqs = await ledger.query (GoalProposal, {witness: ledger.party()});
+      setGoalRequests(reqs.map((req) => req.data));
     } catch (error) {
       alert("Error loading your goals:\n" + error);
     }
@@ -94,6 +100,8 @@ const MainController: React.FC<Props> = ({ledger}) => {
     allUsers,
     myGoals,
     myPendingGoals,
+    friendGoals,
+    goalRequests,
     onAddFriend: addFriend,
     onRemoveFriend: removeFriend,
     onAddGoal: addGoal,

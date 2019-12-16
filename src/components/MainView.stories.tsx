@@ -16,6 +16,8 @@ const makeProps = (user: User, allUsers: User[]): Props => ({
   allUsers,
   myGoals: [],
   myPendingGoals: [],
+  friendGoals: [],
+  goalRequests: [],
   onAddFriend: addFriend,
   onRemoveFriend: removeFriend,
   onAddGoal: addGoal,

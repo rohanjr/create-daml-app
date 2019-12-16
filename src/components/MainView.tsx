@@ -3,6 +3,7 @@ import { Container, Grid, Header, Icon, Segment, Divider } from 'semantic-ui-rea
 import PartyListEdit from './PartyListEdit';
 import GoalListEdit from './GoalListEdit';
 import UserList from './UserList';
+import GoalList from './GoalList';
 import { User } from '../daml/User';
 import { Goal, GoalProposal } from '../daml/Goal';
 import { Party, Text } from '../ledger/Types';
@@ -12,6 +13,8 @@ export type Props = {
   allUsers: User[];
   myGoals: Goal[];
   myPendingGoals: GoalProposal[];
+  friendGoals: Goal[];
+  goalRequests: GoalProposal[];
   onAddFriend: (friend: Party) => Promise<boolean>;
   onRemoveFriend: (friend: Party) => Promise<void>;
   onAddGoal: (pledge: Text, witness: Party | null) => Promise<boolean>;
@@ -61,6 +64,28 @@ const MainView: React.FC<Props> = (props) => {
                 goals={props.myGoals}
                 pendingGoals={props.myPendingGoals}
                 onAddGoal={props.onAddGoal}
+              />
+            </Segment>
+
+            <Segment>
+              <Header as='h2'>
+                <Icon name='star' />
+                <Header.Content>
+                  Friends' Goals
+                  <Icon
+                    link
+                    name='sync alternate'
+                    size='small'
+                    style={{marginLeft: '0.5em'}}
+                    onClick={props.onReloadAllUsers}
+                  />
+                  <Header.Subheader>Goals shared with you</Header.Subheader>
+                </Header.Content>
+              </Header>
+              <Divider />
+              <GoalList
+                goals={props.friendGoals}
+                pendingGoals={props.goalRequests}
               />
             </Segment>
 
