@@ -119,7 +119,7 @@ const MainController: React.FC<Props> = ({ledger}) => {
     onApproveGoal: approveGoal,
     onReloadMyUser: loadMyUser,
     onReloadAllUsers: loadAllUsers,
-    onReloadMyGoals: loadGoals,
+    onReloadGoals: loadGoals,
   };
 
   return MainView(props);

@@ -21,7 +21,7 @@ export type Props = {
   onApproveGoal: (goalRequest: GoalProposal) => Promise<boolean>;
   onReloadMyUser: () => void;
   onReloadAllUsers: () => void;
-  onReloadMyGoals: () => void;
+  onReloadGoals: () => void;
 }
 
 /**
@@ -58,6 +58,13 @@ const MainView: React.FC<Props> = (props) => {
                 <Icon name='star' />
                 <Header.Content>
                   Goals
+                  <Icon
+                    link
+                    name='sync alternate'
+                    size='small'
+                    style={{marginLeft: '0.5em'}}
+                    onClick={props.onReloadGoals}
+                  />
                 </Header.Content>
               </Header>
               <Divider />
@@ -78,7 +85,7 @@ const MainView: React.FC<Props> = (props) => {
                     name='sync alternate'
                     size='small'
                     style={{marginLeft: '0.5em'}}
-                    onClick={props.onReloadAllUsers}
+                    onClick={props.onReloadGoals}
                   />
                   <Header.Subheader>Goals shared with you</Header.Subheader>
                 </Header.Content>
@@ -101,7 +108,7 @@ const MainView: React.FC<Props> = (props) => {
                     name='sync alternate'
                     size='small'
                     style={{marginLeft: '0.5em'}}
-                    onClick={props.onReloadAllUsers}
+                    onClick={props.onReloadGoals}
                   />
                   <Header.Subheader>Others and their friends</Header.Subheader>
                 </Header.Content>

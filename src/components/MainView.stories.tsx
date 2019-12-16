@@ -26,7 +26,7 @@ const makeProps = (user: User, allUsers: User[]): Props => ({
   onApproveGoal: approveGoal,
   onReloadMyUser: reloadMyUser,
   onReloadAllUsers: loadAllUsers,
-  onReloadMyGoals: loadGoals,
+  onReloadGoals: loadGoals,
 })
 
 const alice: User = { party: 'Alice', friends: ['Bob', 'Charlie'], goals: []};
