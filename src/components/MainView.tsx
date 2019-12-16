@@ -18,6 +18,7 @@ export type Props = {
   onAddFriend: (friend: Party) => Promise<boolean>;
   onRemoveFriend: (friend: Party) => Promise<void>;
   onAddGoal: (pledge: Text, witness: Party | null) => Promise<boolean>;
+  onApproveGoal: (goalRequest: GoalProposal) => Promise<boolean>;
   onReloadMyUser: () => void;
   onReloadAllUsers: () => void;
   onReloadMyGoals: () => void;
@@ -86,6 +87,7 @@ const MainView: React.FC<Props> = (props) => {
               <GoalList
                 goals={props.friendGoals}
                 pendingGoals={props.goalRequests}
+                onApproveGoal={props.onApproveGoal}
               />
             </Segment>
 

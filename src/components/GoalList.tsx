@@ -7,13 +7,14 @@ import { Goal, GoalProposal } from '../daml/Goal';
 type Props = {
   goals: Goal[];
   pendingGoals: GoalProposal[];
+  onApproveGoal: (goalRequest: GoalProposal) => Promise<boolean>;
 }
 
 /**
  * React component to display a list of `User`s. The `action` can be
  * performed on every party displayed.
  */
-const GoalList: React.FC<Props> = ({goals, pendingGoals}) => {
+const GoalList: React.FC<Props> = ({goals, pendingGoals, onApproveGoal}) => {
   return (
     <List relaxed>
       Active: {goals.map((goal) =>
@@ -33,8 +34,11 @@ const GoalList: React.FC<Props> = ({goals, pendingGoals}) => {
           key={goal.pledge}
           icon='pencil'
           action={{
-            icon: 'remove',
-            onClick: () => { return; } //onRemoveGoal(goal)
+            icon: 'check',
+            onClick: () => {
+              const b = onApproveGoal(goal);
+              return;
+            }
           }}
         >
           <List.Header>{goal.pledge + " [awaiting " + goal.witness + "]"}</List.Header>

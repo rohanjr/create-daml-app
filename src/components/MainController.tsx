@@ -52,6 +52,17 @@ const MainController: React.FC<Props> = ({ledger}) => {
     }
   }
 
+  const approveGoal = async (goalRequest: GoalProposal): Promise<boolean> => {
+    try {
+      await ledger.pseudoExerciseByKey(GoalProposal.Approve, {party: goalRequest.party, pledge: goalRequest.pledge}, {});
+      await Promise.all([loadGoals()]);
+      return true;
+    } catch (error) {
+      alert("Error approving goal request:\n" + JSON.stringify(error));
+      return false;
+    }
+  }
+
   const loadMyUser = React.useCallback(async () => {
     try {
       const user = await ledger.pseudoFetchByKey(User, {party: ledger.party()});
@@ -79,7 +90,7 @@ const MainController: React.FC<Props> = ({ledger}) => {
       const pendingGoals = await ledger.query(GoalProposal, {party: ledger.party()});
       setMyPendingGoals(pendingGoals.map((goal) => goal.data));
       const friendGoals = await ledger.query(Goal, {witness: ledger.party()});
-      setMyGoals(friendGoals.map((goal) => goal.data));
+      setFriendGoals(friendGoals.map((goal) => goal.data));
       const reqs = await ledger.query (GoalProposal, {witness: ledger.party()});
       setGoalRequests(reqs.map((req) => req.data));
     } catch (error) {
@@ -105,6 +116,7 @@ const MainController: React.FC<Props> = ({ledger}) => {
     onAddFriend: addFriend,
     onRemoveFriend: removeFriend,
     onAddGoal: addGoal,
+    onApproveGoal: approveGoal,
     onReloadMyUser: loadMyUser,
     onReloadAllUsers: loadAllUsers,
     onReloadMyGoals: loadGoals,

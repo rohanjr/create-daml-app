@@ -34,6 +34,6 @@ template GoalProposal with
     maintainer key._1
 
     controller witness can
-      Accept: ContractId Goal
+      Approve: ContractId Goal
         do
           create Goal with party; pledge; witness = Some witness

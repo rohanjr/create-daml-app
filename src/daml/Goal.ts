@@ -27,6 +27,21 @@ export class Goal {
   }
 }
 
+@JsonObject("GoalProposal.Approve")
+class Approve {
+  static template = undefined as unknown as typeof GoalProposal;
+
+  static choiceName = 'Approve';
+
+  static toJSON(approve: Approve): unknown {
+    const jsonConvert = new JsonConvert();
+    jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL;
+    // TODO(MH): For some reason the conversion to JSON does not work right now.
+    jsonConvert.operationMode = OperationMode.DISABLE;
+    return jsonConvert.serializeObject<Approve>(approve);
+  }
+}
+
 @JsonObject("GoalProposal")
 export class GoalProposal {
   @JsonProperty("party", Party)
@@ -51,4 +66,9 @@ export class GoalProposal {
     jsonConvert.operationMode = OperationMode.DISABLE;
     return jsonConvert.serializeObject<GoalProposal>(goalProp);
   }
+
+  static Approve = Approve;
+
 }
+
+Approve.template = GoalProposal;

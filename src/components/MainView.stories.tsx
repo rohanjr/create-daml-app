@@ -3,10 +3,12 @@ import React from 'react';
 import MainView, { Props } from "./MainView";
 import { Party, Text } from '../ledger/Types';
 import { User } from '../daml/User';
+import { GoalProposal } from '../daml/Goal';
 
 const addFriend = async (friend: Party): Promise<boolean> => { alert('Add friend: ' + friend); return true; }
 const removeFriend = async (friend: Party) => { alert('Remove friend: ' + friend); }
 const addGoal = async (pledge: Text): Promise<boolean> => { alert('Add goal: ' + pledge); return true; }
+const approveGoal = async (goal: GoalProposal): Promise<boolean> => { alert('Approve goal: ' + goal.pledge); return true; }
 const reloadMyUser = () => { alert('Load my user'); }
 const loadAllUsers = () => { alert('Load all users'); }
 const loadGoals = () => {alert('Load my goals'); }
@@ -21,6 +23,7 @@ const makeProps = (user: User, allUsers: User[]): Props => ({
   onAddFriend: addFriend,
   onRemoveFriend: removeFriend,
   onAddGoal: addGoal,
+  onApproveGoal: approveGoal,
   onReloadMyUser: reloadMyUser,
   onReloadAllUsers: loadAllUsers,
   onReloadMyGoals: loadGoals,
