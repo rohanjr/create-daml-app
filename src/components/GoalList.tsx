@@ -26,7 +26,7 @@ const GoalList: React.FC<Props> = ({goals, pendingGoals, onApproveGoal}) => {
             onClick: () => { return; } //onRemoveGoal(goal)
           }}
         >
-          <List.Header>{goal.pledge}</List.Header>
+          <List.Header>{"[" + goal.party + "] " + goal.pledge}</List.Header>
         </ListActionItem>
       )}
       Pending: {pendingGoals.map((goal) =>
@@ -41,7 +41,7 @@ const GoalList: React.FC<Props> = ({goals, pendingGoals, onApproveGoal}) => {
             }
           }}
         >
-          <List.Header>{goal.pledge + " [awaiting " + goal.witness + "]"}</List.Header>
+          <List.Header>{"[" + goal.party + "] " + goal.pledge}</List.Header>
         </ListActionItem>
       )}
     </List>

@@ -66,7 +66,7 @@ const GoalListEdit: React.FC<Props> = ({goals, pendingGoals, onAddGoal}) => {
             onClick: () => { return; } //onRemoveGoal(goal)
           }}
         >
-          <List.Header>{goal.pledge + " [awaiting " + goal.witness + "]"}</List.Header>
+          <List.Header>{" [awaiting " + goal.witness + "] " + goal.pledge}</List.Header>
         </ListActionItem>
       )}
       <ListActionItem
