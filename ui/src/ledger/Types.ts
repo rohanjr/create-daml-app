@@ -1,144 +1,223 @@
-import { Any, JsonObject, JsonProperty, JsonConvert, ValueCheckingMode, OperationMode } from "json2typescript";
+// Copyright (c) 2019 The DAML Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
+import * as jtv from '@mojotech/json-type-validation';
+
+/**
+ * Interface for companion objects of serializable types. Its main purpose is
+ * to describe the JSON encoding of values of the serializable type.
+ */
+export interface Serializable<T> {
+  // NOTE(MH): This must be a function to allow for mutually recursive decoders.
+  decoder: () => jtv.Decoder<T>;
+}
 
 /**
  * Identifier of a DAML template.
  */
-@JsonObject("TemplateId")
-export class TemplateId {
-  @JsonProperty("packageId", String)
-  packageId?: string = '';
-  @JsonProperty("moduleName", String)
-  moduleName: string = '';
-  @JsonProperty("entityName", String)
-  entityName: string = '';
+export type TemplateId = {
+  packageId: string;
+  moduleName: string;
+  entityName: string;
 }
 
 /**
- * An interface for template types. This is the counterpart of DAML's
- * `Template` type class.
+ * Interface for objects representing DAML templates. It is similar to the
+ * `Template` type class in DAML.
  */
-export interface Template<T> {
+export interface Template<T> extends Serializable<T> {
   templateId: TemplateId;
-  fromJSON(json: unknown): T;
-  toJSON(t: T): unknown;
+  Archive: Choice<T, {}>;
 }
 
 /**
- * An interface for choice types. This is the counterpart of DAML's
+ * Interface for objects representing DAML choices. It is similar to the
  * `Choice` type class in DAML.
  */
-export interface Choice<T, C> {
-  template: Template<T>;
+export interface Choice<T, C> extends Serializable<C> {
+  template: () => Template<T>;
   choiceName: string;
-  toJSON(c: C): unknown;
 }
 
-export const Archive = <T>(template: Template<T>): Choice<T, {}> => {
-  return {
-    template,
-    choiceName: 'Archive',
-    toJSON: (_: {}): {} => {
-      return {};
-    },
-  };
+const registeredTemplates: {[key: string]: Template<object>} = {};
+
+const templateIdToString = ({packageId, moduleName, entityName}: TemplateId) =>
+  `${packageId}:${moduleName}:${entityName}`;
+
+export const registerTemplate = <T extends {}>(template: Template<T>) => {
+  const templateId = templateIdToString(template.templateId);
+  const oldTemplate = registeredTemplates[templateId];
+  if (oldTemplate === undefined) {
+    registeredTemplates[templateId] = template;
+    console.debug(`Registered template ${templateId}.`);
+  } else {
+    console.warn(`Trying to re-register template ${templateId}.`);
+  }
+}
+
+export const lookupTemplate = (templateId: TemplateId): Template<object> => {
+  const templateIdStr = templateIdToString(templateId);
+  const template = registeredTemplates[templateIdStr];
+  if (template === undefined) {
+    throw Error(`Trying to look up template ${templateIdStr}.`);
+  }
+  return template;
 }
 
 /**
- * The counterpart of DAML's `Party` type.
+ * The counterpart of DAML's `()` type.
+ */
+export type Unit = {};
+
+/**
+ * Companion obect of the `Unit` type.
+ */
+export const Unit: Serializable<Unit> = {
+  decoder: () => jtv.object({}),
+}
+
+/**
+ * The counterpart of DAML's `Bool` type.
+ */
+export type Bool = boolean;
+
+/**
+ * Companion object of the `Bool` type.
+ */
+export const Bool: Serializable<Bool> = {
+  decoder: jtv.boolean,
+}
+
+/**
+ * The counterpart of DAML's `Int` type. We represent `Int`s as string in order
+ * to avoid a loss of precision.
+ */
+export type Int = string;
+
+/**
+ * Companion object of the `Int` type.
+ */
+export const Int: Serializable<Int> = {
+  decoder: jtv.string,
+}
+
+/**
+ * The counterpart of DAML's `Decimal` type. We represent `Decimal`s as string
+ * in order to avoid a loss of precision. The string must match the regular
+ * expression `-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?`.
+ */
+export type Decimal = string;
+
+/**
+ * Companion object of the `Decimal` type.
+ */
+export const Decimal: Serializable<Decimal> = {
+  decoder: jtv.string,
+}
+
+/**
+ * The counterpart of DAML's `Text` type.
+ */
+export type Text = string;
+
+/**
+ * Companion object of the `Text` type.
+ */
+export const Text: Serializable<Text> = {
+  decoder: jtv.string,
+}
+
+/**
+ * The counterpart of DAML's `Time` type. We represent `Times`s as strings with
+ * format `YYYY-MM-DDThh:mm:ss[.ssssss]Z`.
+ */
+export type Time = string;
+
+/**
+ * Companion object of the `Time` type.
+ */
+export const Time: Serializable<Time> = {
+  decoder: jtv.string,
+}
+
+/**
+ * The counterpart of DAML's `Party` type. We represent `Party`s as strings
+ * matching the regular expression `[A-Za-z0-9:_\- ]+`.
  */
 export type Party = string;
-export const Party = String;
-
-type AnyContractId = string;
-const AnyContractId = String;
 
 /**
- * The counterpart of DAML's `ContractId T` type.
+ * Companion object of the `Party` type.
  */
-export class ContractId<T> {
-  readonly contractId: AnyContractId;
-
-  private constructor(contractId: AnyContractId) {
-    this.contractId = contractId;
-  }
-
-  /**
-   * Create a `ContractId<T>` from its JSON representation. This is intended
-   * for use by the `Ledger` class only.
-   */
-  static fromJSON<T>(contractId: AnyContractId): ContractId<T> {
-    return new ContractId<T>(contractId);
-  }
-  /**
-   * Convert a `ContractId<T>` into its JSON representation. This is intended
-   * for use by the `Ledger` class only.
-   */
-
-  toJSON = (): AnyContractId => this.contractId;
-}
-
-@JsonObject("AnyContract")
-class AnyContract {
-  @JsonProperty("observers", [Party])
-  observers: Party[] = [];
-  @JsonProperty("agreementText", String)
-  agreementText: string = '';
-  @JsonProperty("signatories", [Party])
-  signatories: Party[] = [];
-  @JsonProperty("key", Any, true)
-  key: unknown = undefined;
-  @JsonProperty("contractId", AnyContractId)
-  contractId: AnyContractId = '';
-  @JsonProperty("templateId", TemplateId)
-  templateId: TemplateId = new TemplateId();
-  @JsonProperty("witnessParties", [Party])
-  witnessParties: Party[] = [];
-  @JsonProperty("argument")
-  argument: unknown = undefined;
-  @JsonProperty("workflowId", String, true)
-  workflowId?: string = '';
+export const Party: Serializable<Party> = {
+  decoder: jtv.string,
 }
 
 /**
- * A class representing a contract instance of a template type `T`. Besides
- * the contract data it also contains meta data like the contract id,
- * signatories, etc.
+ * The counterpart of DAML's `[T]` list type. We represent lists using arrays.
  */
-export class Contract<T> {
-  templateId: TemplateId = new TemplateId();
-  contractId: ContractId<T>;
-  signatories: Party[] = [];
-  observers: Party[] = [];
-  agreementText: string = '';
-  key: unknown = undefined;
-  data: T;
-  witnessParties: Party[] = [];
-  workflowId?: string = undefined;
+export type List<T> = T[];
 
-  private constructor(contractId: ContractId<T>, argument: T) {
-    this.contractId = contractId;
-    this.data = argument;
-  }
+/**
+ * Companion object of the `List` type.
+ */
+export const List = <T>(t: Serializable<T>): Serializable<T[]> => ({
+  decoder: () => jtv.array(t.decoder()),
+});
 
-  /**
-   * Create a `Contract<T>` from its JSON representation. This is intended
-   * for use by the `Ledger` class only.
-   */
-  static fromJSON<T>(templateType: Template<T>, json: unknown): Contract<T> {
-    const jsonConvert = new JsonConvert();
-    jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL;
-    jsonConvert.operationMode = OperationMode.ENABLE;
-    const anyContract = jsonConvert.deserializeObject(json, AnyContract);
-    const contractId = ContractId.fromJSON<T>(anyContract.contractId);
-    const argument = templateType.fromJSON(anyContract.argument);
-    const contract = new Contract<T>(contractId, argument);
-    contract.observers = anyContract.observers
-    contract.agreementText = anyContract.agreementText
-    contract.signatories = anyContract.signatories
-    contract.key = anyContract.key
-    contract.templateId = anyContract.templateId
-    contract.witnessParties = anyContract.witnessParties
-    contract.workflowId = anyContract.workflowId
-    return contract;
-  }
+/**
+ * The counterpart of DAML's `Date` type. We represent `Date`s as strings with
+ * format `YYYY-MM-DD`.
+ */
+export type Date = string;
+
+/**
+ * Companion object of the `Date` type.
+ */
+export const Date: Serializable<Date> = {
+  decoder: jtv.string,
 }
+
+/**
+ * The counterpart of DAML's `ContractId T` type. We represent `ContractId`s
+ * as strings. Their exact format of these strings depends on the ledger the
+ * DAML application is running on.
+ */
+export type ContractId<T> = string;
+
+/**
+ * Companion object of the `ContractId` type.
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const ContractId = <T>(_t: Serializable<T>): Serializable<ContractId<T>> => ({
+  decoder: jtv.string,
+});
+
+/**
+ * The counterpart of DAML's `Optional T` type. Nested optionals are not yet
+ * supported.
+ */
+export type Optional<T> = T | null;
+
+/**
+ * Companion object of the `Optional` type.
+ */
+export const Optional = <T>(t: Serializable<T>): Serializable<Optional<T>> => ({
+  decoder: () => jtv.oneOf(jtv.constant(null), t.decoder()),
+});
+
+/**
+ * The counterpart of DAML's `TextMap T` type. We represent `TextMap`s as
+ * dictionaries.
+ */
+export type TextMap<T> = { [key: string]: T };
+
+/**
+ * Companion object of the `TextMap` type.
+ */
+export const TextMap = <T>(t: Serializable<T>): Serializable<TextMap<T>> => ({
+  decoder: () => jtv.dict(t.decoder()),
+});
+
+// TODO(MH): `Numeric` type.
+
+// TODO(MH): `Map` type.
