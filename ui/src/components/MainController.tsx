@@ -38,7 +38,7 @@ const MainController: React.FC<Props> = ({ledger}) => {
   const loadMyUser = React.useCallback(async () => {
     try {
       const user = await ledger.pseudoFetchByKey(User, {party: ledger.party()});
-      setMyUser(user.data);
+      setMyUser(user.argument);
     } catch (error) {
       alert("Unknown error:\n" + error);
     }
@@ -47,7 +47,7 @@ const MainController: React.FC<Props> = ({ledger}) => {
   const loadAllUsers = React.useCallback(async () => {
     try {
       const allUserContracts = await ledger.fetchAll(User);
-      const allUsers = allUserContracts.map((user) => user.data);
+      const allUsers = allUserContracts.map((user) => user.argument);
       allUsers.sort((user1, user2) => user1.party.localeCompare(user2.party))
       setAllUsers(allUsers);
     } catch (error) {

@@ -2,6 +2,7 @@ import React from 'react'
 import { Button, Form, Grid, Header, Image, Segment } from 'semantic-ui-react'
 import Credentials, { computeToken } from '../ledger/Credentials';
 import Ledger from '../ledger/Ledger';
+import LedgerError from '../ledger/Ledger';
 import { User } from '../daml/User';
 import { useQuery, useParty } from '../daml-react-hooks';
 
@@ -26,8 +27,8 @@ const LoginScreen: React.FC<Props> = ({onLogin}) => {
         return;
       }
       let credentials: Credentials = {party: username, token: password};
-      const ledger = new Ledger(credentials.token);
-      const user = await ledger.pseudoLookupByKey(User, () => {party: username});
+      const ledger = new Ledger(credentials);
+      const user = await ledger.pseudoLookupByKey(User, {party: username});
       if (user === undefined) {
         alert("You have not yet signed up.");
         return;
@@ -42,18 +43,18 @@ const LoginScreen: React.FC<Props> = ({onLogin}) => {
     try {
       event.preventDefault();
       let credentials: Credentials = {party: username, token: password};
-      const ledger = new Ledger(credentials.token);
+      const ledger = new Ledger(credentials);
       const user: User = {party: username, friends: []};
       await ledger.create(User, user);
       await handleLogin();
     } catch(error) {
-      if (error instanceof Ledger.Error) {
-        const {errors} = error;
-        if (errors.length === 1 && errors[0].includes("DuplicateKey")) {
-          alert("You are already signed up.");
-          return;
-        }
-      }
+      // if (error instanceof LedgerError) {
+      //   const {status, errors} = error;
+      //   if (errors.length === 1 && errors[0].includes("DuplicateKey")) {
+      //     alert("You are already signed up.");
+      //     return;
+      //   }
+      // }
       alert("Unknown error:\n" + error);
     }
   }

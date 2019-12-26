@@ -1,6 +1,7 @@
 // Copyright (c) 2019 The DAML Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 import { Choice, ContractId, List, Party, Template, TemplateId, Text, lookupTemplate } from './Types';
+import Credentials from './Credentials';
 import * as jtv from '@mojotech/json-type-validation';
 import fetch from 'cross-fetch';
 
@@ -88,11 +89,11 @@ type LedgerError = {
  * An object of type `Ledger` represents a handle to a DAML ledger.
  */
 class Ledger {
-  private readonly token: string;
+  private readonly credentials: Credentials;
   private readonly baseUrl: string;
 
-  constructor(token: string, baseUrl?: string) {
-    this.token = token;
+  constructor(credentials: Credentials, baseUrl?: string) {
+    this.credentials = credentials;
     if (!baseUrl) {
       this.baseUrl = '';
     } else if (baseUrl.endsWith('/')) {
@@ -109,7 +110,7 @@ class Ledger {
     const httpResponse = await fetch(this.baseUrl + endpoint, {
       body: JSON.stringify(payload),
       headers: {
-        'Authorization': 'Bearer ' + this.token,
+        'Authorization': 'Bearer ' + this.credentials.token,
         'Content-type': 'application/json'
       },
       method: 'post',
@@ -124,6 +125,10 @@ class Ledger {
     // TODO(MH): Validate.
     const ledgerResponse = json as LedgerResponse;
     return ledgerResponse.result;
+  }
+
+  party(): string {
+    return this.credentials.party;
   }
 
   /**
