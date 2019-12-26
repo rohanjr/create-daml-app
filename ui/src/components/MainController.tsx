@@ -1,23 +1,29 @@
 import React from 'react';
 import MainView from './MainView';
-import Ledger from '../ledger/Ledger';
 import { Party } from '../ledger/Types';
 import { User } from '../daml/User';
+import { useParty, usePseudoExerciseByKey, usePseudoFetchByKey, useQuery } from '../daml-react-hooks';
 
 type Props = {
-  ledger: Ledger;
 }
 
 /**
  * React component to control the `MainView`.
  */
-const MainController: React.FC<Props> = ({ledger}) => {
+const MainController: React.FC<Props> = ({}) => {
   const [myUser, setMyUser] = React.useState<User>({party: '', friends: []});
   const [allUsers, setAllUsers] = React.useState<User[]>([]);
 
+  const party = useParty();
+  const user = usePseudoFetchByKey(User, () => ({ party }), [party]);
+  const allUserContracts = useQuery(User).contracts;
+
+  const [exerciseAddFriend, _loadingAddFriend] = usePseudoExerciseByKey(User.AddFriend);
+  const [exerciseRemoveFriend, _loadingRemoveFriend] = usePseudoExerciseByKey(User.RemoveFriend);
+
   const addFriend = async (friend: Party): Promise<boolean> => {
     try {
-      await ledger.pseudoExerciseByKey(User.AddFriend, {party: ledger.party()}, {friend});
+      await exerciseAddFriend({party}, {friend});
       await Promise.all([loadMyUser(), loadAllUsers()]);
       return true;
     } catch (error) {
@@ -28,32 +34,32 @@ const MainController: React.FC<Props> = ({ledger}) => {
 
   const removeFriend = async (friend: Party): Promise<void> => {
     try {
-      await ledger.pseudoExerciseByKey(User.RemoveFriend, {party: ledger.party()}, {friend});
+      await exerciseRemoveFriend({party}, {friend});
       await Promise.all([loadMyUser(), loadAllUsers()]);
     } catch (error) {
       alert("Unknown error:\n" + JSON.stringify(error));
     }
   }
 
-  const loadMyUser = React.useCallback(async () => {
+  const loadMyUser = () => {
     try {
-      const user = await ledger.pseudoFetchByKey(User, {party: ledger.party()});
-      setMyUser(user.data);
+      setMyUser(user.contract!.argument);
+      // TODO(RJR): Handle null contract and loading flag
     } catch (error) {
       alert("Unknown error:\n" + error);
     }
-  }, [ledger]);
+  }
 
-  const loadAllUsers = React.useCallback(async () => {
+  const loadAllUsers = () => {
     try {
-      const allUserContracts = await ledger.fetchAll(User);
-      const allUsers = allUserContracts.map((user) => user.data);
+      // TODO(RJR): Handle loading == true
+      const allUsers = allUserContracts.map((user) => user.argument);
       allUsers.sort((user1, user2) => user1.party.localeCompare(user2.party))
       setAllUsers(allUsers);
     } catch (error) {
       alert("Unknown error:\n" + error);
     }
-  }, [ledger]);
+  }
 
   React.useEffect(() => { loadMyUser(); }, [loadMyUser]);
   React.useEffect(() => { loadAllUsers(); }, [loadAllUsers]);

@@ -2,16 +2,16 @@ import React from 'react'
 import { Image, Menu } from 'semantic-ui-react'
 import Ledger from '../ledger/Ledger';
 import MainController from './MainController';
+import { useParty } from '../daml-react-hooks';
 
 type Props = {
-  ledger: Ledger;
   onLogout: () => void;
 }
 
 /**
  * React component for the main screen of the `App`.
  */
-const MainScreen: React.FC<Props> = ({ledger, onLogout}) => {
+const MainScreen: React.FC<Props> = ({onLogout}) => {
   return (
     <>
       <Menu icon borderless>
@@ -27,7 +27,7 @@ const MainScreen: React.FC<Props> = ({ledger, onLogout}) => {
         </Menu.Item>
         <Menu.Menu position='right'>
           <Menu.Item position='right'>
-            You are logged in as {ledger.party()}.
+            You are logged in as {useParty()}.
           </Menu.Item>
           <Menu.Item
             position='right'
@@ -38,7 +38,7 @@ const MainScreen: React.FC<Props> = ({ledger, onLogout}) => {
         </Menu.Menu>
       </Menu>
 
-      <MainController ledger={ledger}/>
+      <MainController/>
     </>
   );
 };

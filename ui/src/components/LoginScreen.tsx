@@ -2,11 +2,12 @@ import React from 'react'
 import { Button, Form, Grid, Header, Image, Segment } from 'semantic-ui-react'
 import Credentials, { computeToken } from '../ledger/Credentials';
 import Ledger from '../ledger/Ledger';
+import LedgerError from '../ledger/Ledger';
 import { User } from '../daml/User';
-import { useQuery, useParty } from '../daml-react-hooks';
+import { usePseudoLookupByKey } from '../daml-react-hooks';
 
 type Props = {
-  onLogin: (ledger: Ledger) => void;
+  onLogin: (credentials: Credentials) => void;
 }
 
 /**
@@ -15,6 +16,8 @@ type Props = {
 const LoginScreen: React.FC<Props> = ({onLogin}) => {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
+
+  const user = usePseudoLookupByKey(User, () => ({ party: username }));
 
   const handleLogin = async (event?: React.FormEvent) => {
     try {
@@ -26,13 +29,11 @@ const LoginScreen: React.FC<Props> = ({onLogin}) => {
         return;
       }
       let credentials: Credentials = {party: username, token: password};
-      const ledger = new Ledger(credentials.token);
-      const user = await ledger.pseudoLookupByKey(User, () => {party: username});
+      onLogin(credentials);
       if (user === undefined) {
         alert("You have not yet signed up.");
         return;
       }
-      onLogin(ledger);
     } catch(error) {
       alert("Unknown error:\n" + error);
     }
@@ -42,18 +43,19 @@ const LoginScreen: React.FC<Props> = ({onLogin}) => {
     try {
       event.preventDefault();
       let credentials: Credentials = {party: username, token: password};
+      // TODO(RJR): Should we create the user via a hook instead of creating a new ledger here?
       const ledger = new Ledger(credentials.token);
       const user: User = {party: username, friends: []};
       await ledger.create(User, user);
       await handleLogin();
     } catch(error) {
-      if (error instanceof Ledger.Error) {
-        const {errors} = error;
-        if (errors.length === 1 && errors[0].includes("DuplicateKey")) {
-          alert("You are already signed up.");
-          return;
-        }
-      }
+      // if (error instanceof LedgerError) {
+      //   const {errors} = error;
+      //   if (errors.length === 1 && errors[0].includes("DuplicateKey")) {
+      //     alert("You are already signed up.");
+      //     return;
+      //   }
+      // }
       alert("Unknown error:\n" + error);
     }
   }
