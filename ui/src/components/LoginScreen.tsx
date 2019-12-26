@@ -3,6 +3,7 @@ import { Button, Form, Grid, Header, Image, Segment } from 'semantic-ui-react'
 import Credentials, { computeToken } from '../ledger/Credentials';
 import Ledger from '../ledger/Ledger';
 import { User } from '../daml/User';
+import { useQuery, useParty } from '../daml-react-hooks';
 
 type Props = {
   onLogin: (ledger: Ledger) => void;
@@ -25,8 +26,8 @@ const LoginScreen: React.FC<Props> = ({onLogin}) => {
         return;
       }
       let credentials: Credentials = {party: username, token: password};
-      const ledger = new Ledger(credentials);
-      const user = await ledger.pseudoLookupByKey(User, {party: username});
+      const ledger = new Ledger(credentials.token);
+      const user = await ledger.pseudoLookupByKey(User, () => {party: username});
       if (user === undefined) {
         alert("You have not yet signed up.");
         return;
@@ -41,7 +42,7 @@ const LoginScreen: React.FC<Props> = ({onLogin}) => {
     try {
       event.preventDefault();
       let credentials: Credentials = {party: username, token: password};
-      const ledger = new Ledger(credentials);
+      const ledger = new Ledger(credentials.token);
       const user: User = {party: username, friends: []};
       await ledger.create(User, user);
       await handleLogin();

@@ -67,6 +67,12 @@ export const usePseudoFetchByKey = <T>(template: Template<T>, keyFactory: () => 
   }), [entry]);
 }
 
+/// Similar to above but corresponding to `lookupByKey`.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const usePseudoLookupByKey = <T>(template: Template<T>, keyFactory: () => Query<T>, keyDeps?: readonly any[]): FetchResult<T> | undefined => {
+  return usePseudoFetchByKey(template, keyFactory, keyDeps) || undefined;
+}
+
 const reloadTemplate = async <T extends {}>(state: DamlLedgerState, template: Template<T>) => {
   const templateStore = state.store.templateStores.get(template) as TemplateStore.Store<T> | undefined;
   if (templateStore) {

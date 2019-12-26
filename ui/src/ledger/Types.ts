@@ -15,7 +15,7 @@ export interface Serializable<T> {
  * Identifier of a DAML template.
  */
 export type TemplateId = {
-  packageId: string;
+  packageId?: string;
   moduleName: string;
   entityName: string;
 }

@@ -1,5 +1,6 @@
 import {JsonObject, JsonProperty, JsonConvert, ValueCheckingMode, OperationMode} from "json2typescript";
-import { Party, TemplateId } from "../ledger/Types";
+import { Party, Template, TemplateId, Choice } from "../ledger/Types";
+import * as jtv from '@mojotech/json-type-validation';
 
 @JsonObject("User.AddFriend")
 class AddFriend {
@@ -52,6 +53,21 @@ class Delete {
   }
 }
 
+@JsonObject("User.Archive")
+class Archive {
+  static template = undefined as unknown as typeof User;
+
+  static choiceName = 'Archive';
+
+  static toJSON(archive_: Archive): unknown {
+    const jsonConvert = new JsonConvert();
+    jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL;
+    // TODO(MH): For some reason the conversion to JSON does not work right now.
+    jsonConvert.operationMode = OperationMode.DISABLE;
+    return jsonConvert.serializeObject<Delete>(archive_);
+  }
+}
+
 @JsonObject("User")
 export class User {
   @JsonProperty("party", Party)
@@ -82,8 +98,11 @@ export class User {
   static Delete = Delete;
 }
 
+
 AddFriend.template = User;
 
 RemoveFriend.template = User;
 
 Delete.template = User;
+
+Archive.template = User;
