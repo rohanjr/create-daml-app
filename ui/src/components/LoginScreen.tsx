@@ -17,8 +17,6 @@ const LoginScreen: React.FC<Props> = ({onLogin}) => {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
 
-  const user = usePseudoLookupByKey(User, () => ({ party: username }));
-
   const handleLogin = async (event?: React.FormEvent) => {
     try {
       if (event) {
@@ -29,11 +27,15 @@ const LoginScreen: React.FC<Props> = ({onLogin}) => {
         return;
       }
       let credentials: Credentials = {party: username, token: password};
-      onLogin(credentials);
+      // NOTE(RJR): Using old convention of ledger methods instead of hooks.
+      // Is it possible to move to using hooks here?
+      const ledger = new Ledger(credentials.token);
+      const user = await ledger.pseudoLookupByKey(User, {party: username});
       if (user === undefined) {
         alert("You have not yet signed up.");
         return;
       }
+      onLogin(credentials);
     } catch(error) {
       alert("Unknown error:\n" + error);
     }
