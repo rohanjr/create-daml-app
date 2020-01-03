@@ -11,6 +11,7 @@ export type Props = {
   allUsers: User[];
   onAddFriend: (friend: Party) => Promise<boolean>;
   onRemoveFriend: (friend: Party) => Promise<void>;
+  onPost: (content: string, sharingWith: string) => Promise<boolean>;
   onReloadMyUser: () => void;
   onReloadAllUsers: () => void;
 }
@@ -36,7 +37,7 @@ const MainView: React.FC<Props> = (props) => {
                 </Header.Content>
               </Header>
               <PostEdit
-                writePost={async (content: string, sharingWith: string) => { return true; }}
+                writePost={props.onPost}
               />
             </Segment>
 

@@ -6,6 +6,7 @@ import { User } from '../daml/User';
 
 const addFriend = async (friend: Party): Promise<boolean> => { alert('Add friend: ' + friend); return true; }
 const removeFriend = async (friend: Party) => { alert('Remove friend: ' + friend); }
+const writePost = async (content: string, sharingWith: string) => { alert('Writing post: "' + content + '" to friends ' + sharingWith); return true; }
 const reloadMyUser = () => { alert('Load my user'); }
 const loadAllUsers = () => { alert('Load all users'); }
 
@@ -14,6 +15,7 @@ const makeProps = (user: User, allUsers: User[]): Props => ({
   allUsers,
   onAddFriend: addFriend,
   onRemoveFriend: removeFriend,
+  onPost: writePost,
   onReloadMyUser: reloadMyUser,
   onReloadAllUsers: loadAllUsers,
 })

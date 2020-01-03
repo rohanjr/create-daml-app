@@ -1,5 +1,5 @@
 import React from 'react'
-import { Form, Input } from 'semantic-ui-react';
+import { Form, Input, Button } from 'semantic-ui-react';
 import { Text, Party } from '../ledger/Types';
 
 type Props = {
@@ -13,6 +13,10 @@ const PostEdit: React.FC<Props> = ({writePost}) => {
   const [content, setContent] = React.useState('');
   const [sharingWith, setSharingWith] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  // const stringToPartyList = async (parties: string): [Party] => {
+
+  // }
 
   const submitPost = async (event?: React.FormEvent) => {
     if (event) {
@@ -49,6 +53,7 @@ const PostEdit: React.FC<Props> = ({writePost}) => {
         value={sharingWith}
         onChange={(event) => setSharingWith(event.currentTarget.value)}
       />
+      <Button type="submit">Post</Button>
     </Form>
   );
 };

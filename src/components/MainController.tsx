@@ -35,6 +35,17 @@ const MainController: React.FC<Props> = ({ledger}) => {
     }
   }
 
+  const writePost = async (content: string, parties: string): Promise<boolean> => {
+    try {
+      const sharingWith = parties.replace(/\s/g, "").split(",").map(Party);
+      await ledger.pseudoExerciseByKey(User.WritePost, {party: ledger.party()}, {content, sharingWith});
+      return true;
+    } catch (error) {
+      alert("Unknown error while writing post:\n" + JSON.stringify(error));
+      return false;
+    }
+  }
+
   const loadMyUser = React.useCallback(async () => {
     try {
       const user = await ledger.pseudoFetchByKey(User, {party: ledger.party()});
@@ -67,6 +78,7 @@ const MainController: React.FC<Props> = ({ledger}) => {
     allUsers,
     onAddFriend: addFriend,
     onRemoveFriend: removeFriend,
+    onPost: writePost,
     onReloadMyUser: loadMyUser,
     onReloadAllUsers: loadAllUsers,
   };
