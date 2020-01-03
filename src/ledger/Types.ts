@@ -49,6 +49,12 @@ export const Archive = <T>(template: Template<T>): Choice<T, {}> => {
 export type Party = string;
 export const Party = String;
 
+/**
+ * The counterpart of DAML's `Party` type.
+ */
+export type Text = string;
+export const Text = String;
+
 type AnyContractId = string;
 const AnyContractId = String;
 
