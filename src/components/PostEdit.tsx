@@ -1,6 +1,6 @@
 import React from 'react'
 import { Form, Input, Button } from 'semantic-ui-react';
-import { Text, Party } from '../ledger/Types';
+import { Text } from '../ledger/Types';
 
 type Props = {
   writePost: (content: Text, sharingWith: string) => Promise<boolean>;
@@ -38,7 +38,6 @@ const PostEdit: React.FC<Props> = ({writePost}) => {
         transparent
         readOnly={isSubmitting}
         loading={isSubmitting}
-        size='small'
         placeholder='Tell me a secret ;)'
         value={content}
         onChange={(event) => setContent(event.currentTarget.value)}
@@ -48,7 +47,6 @@ const PostEdit: React.FC<Props> = ({writePost}) => {
         transparent
         readOnly={isSubmitting}
         loading={isSubmitting}
-        size='small'
         placeholder='Friends to share this with!'
         value={sharingWith}
         onChange={(event) => setSharingWith(event.currentTarget.value)}

@@ -1,14 +1,17 @@
 import React from 'react';
-import { Container, Grid, Header, Icon, Segment, Divider, Form, Input } from 'semantic-ui-react';
+import { Container, Grid, Header, Icon, Segment, Divider } from 'semantic-ui-react';
 import PartyListEdit from './PartyListEdit';
 import UserList from './UserList';
 import { User } from '../daml/User';
+import { Post } from '../daml/Post';
 import { Party } from '../ledger/Types';
 import PostEdit from './PostEdit';
+import Feed from './Feed';
 
 export type Props = {
   myUser: User;
   allUsers: User[];
+  posts: Post[];
   onAddFriend: (friend: Party) => Promise<boolean>;
   onRemoveFriend: (friend: Party) => Promise<void>;
   onPost: (content: string, sharingWith: string) => Promise<boolean>;
@@ -23,24 +26,17 @@ const MainView: React.FC<Props> = (props) => {
   return (
     <Container>
       <Grid centered columns={2}>
+
         <Grid.Row stretched>
           <Grid.Column>
             <Header as='h1' size='huge' color='blue' textAlign='center' style={{padding: '1ex 0em 0ex 0em'}}>
                 Welcome, {props.myUser.party}!
             </Header>
+          </Grid.Column>
+        </Grid.Row>
 
-            <Segment>
-              <Header as='h2'>
-                <Icon name='pencil square' />
-                <Header.Content>
-                  <Header.Subheader>Share a post with some friends!</Header.Subheader>
-                </Header.Content>
-              </Header>
-              <PostEdit
-                writePost={props.onPost}
-              />
-            </Segment>
-
+        <Grid.Row stretched>
+          <Grid.Column>
             <Segment>
               <Header as='h2'>
                 <Icon name='user' />
@@ -79,6 +75,23 @@ const MainView: React.FC<Props> = (props) => {
                   onClick: props.onAddFriend
                 }}
               />
+            </Segment>
+          </Grid.Column>
+
+          <Grid.Column>
+            <Segment>
+              <Header as='h2'>
+                <Icon name='pencil square' />
+                <Header.Content>
+                  Posts
+                  <Header.Subheader>Share a post with some friends</Header.Subheader>
+                </Header.Content>
+              </Header>
+              <PostEdit
+                writePost={props.onPost}
+              />
+            <Divider />
+            <Feed posts={props.posts} />
             </Segment>
           </Grid.Column>
         </Grid.Row>

@@ -3,6 +3,7 @@ import MainView from './MainView';
 import Ledger from '../ledger/Ledger';
 import { Party } from '../ledger/Types';
 import { User } from '../daml/User';
+import { Post } from '../daml/Post';
 
 type Props = {
   ledger: Ledger;
@@ -14,6 +15,7 @@ type Props = {
 const MainController: React.FC<Props> = ({ledger}) => {
   const [myUser, setMyUser] = React.useState<User>({party: '', friends: []});
   const [allUsers, setAllUsers] = React.useState<User[]>([]);
+  const [posts, setPosts] = React.useState<Post[]>([]);
 
   const addFriend = async (friend: Party): Promise<boolean> => {
     try {
@@ -39,6 +41,7 @@ const MainController: React.FC<Props> = ({ledger}) => {
     try {
       const sharingWith = parties.replace(/\s/g, "").split(",").map(Party);
       await ledger.pseudoExerciseByKey(User.WritePost, {party: ledger.party()}, {content, sharingWith});
+      await Promise.all([loadPosts()]);
       return true;
     } catch (error) {
       alert("Unknown error while writing post:\n" + JSON.stringify(error));
@@ -66,16 +69,28 @@ const MainController: React.FC<Props> = ({ledger}) => {
     }
   }, [ledger]);
 
+  const loadPosts = React.useCallback(async () => {
+    try {
+      const allPosts = await ledger.fetchAll(Post);
+      setPosts(allPosts.map((post) => post.data));
+    } catch (error) {
+      alert("Error loading posts:\n" + error);
+    }
+  }, [ledger]);
+
+
   React.useEffect(() => { loadMyUser(); }, [loadMyUser]);
   React.useEffect(() => { loadAllUsers(); }, [loadAllUsers]);
   React.useEffect(() => {
     const interval = setInterval(loadAllUsers, 5000);
     return () => clearInterval(interval);
   }, [loadAllUsers]);
+  React.useEffect(() => { loadPosts(); }, [loadPosts]);
 
   const props = {
     myUser,
     allUsers,
+    posts,
     onAddFriend: addFriend,
     onRemoveFriend: removeFriend,
     onPost: writePost,

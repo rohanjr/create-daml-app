@@ -13,6 +13,7 @@ const loadAllUsers = () => { alert('Load all users'); }
 const makeProps = (user: User, allUsers: User[]): Props => ({
   myUser: user,
   allUsers,
+  posts: [],
   onAddFriend: addFriend,
   onRemoveFriend: removeFriend,
   onPost: writePost,
