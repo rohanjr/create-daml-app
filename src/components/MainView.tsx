@@ -1,9 +1,10 @@
 import React from 'react';
-import { Container, Grid, Header, Icon, Segment, Divider } from 'semantic-ui-react';
+import { Container, Grid, Header, Icon, Segment, Divider, Form, Input } from 'semantic-ui-react';
 import PartyListEdit from './PartyListEdit';
 import UserList from './UserList';
 import { User } from '../daml/User';
 import { Party } from '../ledger/Types';
+import PostEdit from './PostEdit';
 
 export type Props = {
   myUser: User;
@@ -26,6 +27,18 @@ const MainView: React.FC<Props> = (props) => {
             <Header as='h1' size='huge' color='blue' textAlign='center' style={{padding: '1ex 0em 0ex 0em'}}>
                 Welcome, {props.myUser.party}!
             </Header>
+
+            <Segment>
+              <Header as='h2'>
+                <Icon name='pencil square' />
+                <Header.Content>
+                  <Header.Subheader>Share a post with some friends!</Header.Subheader>
+                </Header.Content>
+              </Header>
+              <PostEdit
+                writePost={async (content: string, sharingWith: string) => { return true; }}
+              />
+            </Segment>
 
             <Segment>
               <Header as='h2'>
