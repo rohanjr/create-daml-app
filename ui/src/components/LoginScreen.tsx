@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button, Form, Grid, Header, Image, Segment } from 'semantic-ui-react'
-import Credentials, { computeToken } from '../ledger/Credentials';
+import Credentials, { preCheckCredentials, computeToken } from '../ledger/Credentials';
 import Ledger from '../ledger/Ledger';
 import LedgerError from '../ledger/Ledger';
 import { User } from '../daml/User';
@@ -10,56 +10,63 @@ type Props = {
   onLogin: (credentials: Credentials) => void;
 }
 
+enum Status { Normal, LoggingIn, SigningUp }
+
 /**
  * React component for the login screen of the `App`.
  */
 const LoginScreen: React.FC<Props> = ({onLogin}) => {
+  const [status, setStatus] = React.useState(Status.Normal);
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
 
-  const handleLogin = async (event?: React.FormEvent) => {
-    try {
-      if (event) {
-        event.preventDefault();
-      }
-      if (password !== computeToken(username)) {
-        alert('Wrong password.');
-        return;
-      }
-      let credentials: Credentials = {party: username, token: password};
-      // NOTE(RJR): Using old convention of ledger methods instead of hooks.
-      // Is it possible to move to using hooks here?
-      const ledger = new Ledger(credentials.token);
-      const user = await ledger.pseudoLookupByKey(User, {party: username});
-      if (user === undefined) {
-        alert("You have not yet signed up.");
-        return;
-      }
-      onLogin(credentials);
-    } catch(error) {
-      alert("Unknown error:\n" + error);
+  const withCredentials = async (cont: (credentials: Credentials) => Promise<void>) => {
+    const credentials = {
+      party: username,
+      token: password,
     }
+    const error = preCheckCredentials(credentials);
+    if (error !== null) {
+      alert(error);
+      return;
+    }
+    await cont(credentials);
+  }
+
+  const handleLogin = async (event?: React.FormEvent) => {
+    if (event) {
+      event.preventDefault();
+    }
+    await withCredentials(async (credentials) => {
+      try {
+        setStatus(Status.LoggingIn);
+        const ledger = new Ledger(credentials.token);
+        const user = await ledger.pseudoLookupByKey(User, {party: username});
+        if (user) {
+          setStatus(Status.Normal);
+          onLogin(credentials);
+        } else {
+          alert("You have not yet signed up.");
+        }
+      } finally {
+        setStatus(Status.Normal);
+      }
+    });
   }
 
   const handleSignup = async (event: React.FormEvent) => {
-    try {
-      event.preventDefault();
-      let credentials: Credentials = {party: username, token: password};
-      // TODO(RJR): Should we create the user via a hook instead of creating a new ledger here?
-      const ledger = new Ledger(credentials.token);
-      const user: User = {party: username, friends: []};
-      await ledger.create(User, user);
-      await handleLogin();
-    } catch(error) {
-      // if (error instanceof LedgerError) {
-      //   const {errors} = error;
-      //   if (errors.length === 1 && errors[0].includes("DuplicateKey")) {
-      //     alert("You are already signed up.");
-      //     return;
-      //   }
-      // }
-      alert("Unknown error:\n" + error);
-    }
+    event.preventDefault();
+    await withCredentials(async (credentials) => {
+      try {
+        setStatus(Status.SigningUp)
+        const ledger = new Ledger(credentials.token);
+        const user: User = {party: username, friends: []};
+        await ledger.create(User, user);
+        await handleLogin();
+      } finally {
+        setStatus(Status.Normal);
+      }
+    });
   }
 
   const handleCalculatePassword = (event: React.FormEvent) => {
@@ -113,12 +120,14 @@ const LoginScreen: React.FC<Props> = ({onLogin}) => {
             <Button.Group fluid size='large'>
               <Button
                 primary
+                loading={status === Status.LoggingIn}
                 onClick={handleLogin}
               >
                 Log in
               </Button>
               <Button
                 secondary
+                loading={status === Status.SigningUp}
                 onClick={handleSignup}
               >
                 Sign up

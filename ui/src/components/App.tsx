@@ -8,7 +8,7 @@ import Credentials from '../ledger/Credentials';
  * React component for the entry point into the application.
  */
 const App: React.FC = () => {
-  const [credentials, setCredentials] = React.useState<Credentials | undefined>(undefined);
+  const [credentials, setCredentials] = React.useState<Credentials | undefined>();
 
   return credentials
     ? <DamlLedger credentials={credentials}>
