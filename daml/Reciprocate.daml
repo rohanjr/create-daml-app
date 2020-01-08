@@ -14,8 +14,8 @@ trigger = runTrigger $ Trigger
   , registeredTemplates = AllInDar
   }
   where
-    rule : Party -> ACS -> Map.Map CommandId [Command] -> () -> TriggerA ()
-    rule party acs commandsInFlight () = do
+    rule : Party -> ACS -> Time -> Map.Map CommandId [Command] -> () -> TriggerA ()
+    rule party acs _time commandsInFlight () = do
       let users = getContracts @User acs
       case List.find (\(_, user) -> user.party == party) users of
         None -> pure ()
