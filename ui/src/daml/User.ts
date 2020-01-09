@@ -1,9 +1,10 @@
 // Not generated, but should be using daml2ts.
 import * as daml from "../ledger/Types";
 import * as jtv from '@mojotech/json-type-validation';
+import packageId from './PackageId';
 
 const moduleName = 'User';
-const templateId = (entityName: string): daml.TemplateId => ({moduleName, entityName});
+const templateId = (entityName: string): daml.TemplateId => ({packageId, moduleName, entityName});
 
 export type AddFriend = {
   friend: daml.Party;
@@ -38,17 +39,21 @@ export const Archive: daml.Serializable<Archive> = ({
 });
 
 
+const getContractIdDecoder: () => () => jtv.Decoder<daml.ContractId<User>> = () => () => {
+  return daml.ContractId(User).decoder();
+}
 export type User = {
   party: daml.Party;
   friends: daml.Party[];
 };
 export const User: daml.Template<User> & {
-  Archive: daml.Choice<User, Archive>;
-  Delete: daml.Choice<User, Delete>;
-  AddFriend: daml.Choice<User, AddFriend>;
-  RemoveFriend: daml.Choice<User, RemoveFriend>;
+  Archive: daml.Choice<User, Archive, daml.Unit>;
+  Delete: daml.Choice<User, Delete, daml.Unit>;
+  AddFriend: daml.Choice<User, AddFriend, daml.ContractId<User>>;
+  RemoveFriend: daml.Choice<User, RemoveFriend, daml.ContractId<User>>;
 } = {
   templateId: templateId('User'),
+  keyDecoder: daml.Party.decoder,
   decoder: () => jtv.object({
     party: daml.Party.decoder(),
     friends: daml.List(daml.Party).decoder()
@@ -56,22 +61,26 @@ export const User: daml.Template<User> & {
   Archive: {
     template: () => User,
     choiceName: 'Archive',
-    decoder: Archive.decoder,
+    argumentDecoder: Archive.decoder,
+    resultDecoder: daml.Unit.decoder,
   },
   Delete: {
     template: () => User,
     choiceName: 'Delete',
-    decoder: Delete.decoder,
+    argumentDecoder: Delete.decoder,
+    resultDecoder: daml.Unit.decoder,
   },
   AddFriend: {
     template: () => User,
     choiceName: 'AddFriend',
-    decoder: AddFriend.decoder,
+    argumentDecoder: AddFriend.decoder,
+    resultDecoder: getContractIdDecoder(),
   },
   RemoveFriend: {
     template: () => User,
     choiceName: 'RemoveFriend',
-    decoder: RemoveFriend.decoder,
+    argumentDecoder: RemoveFriend.decoder,
+    resultDecoder: getContractIdDecoder(),
   },
 };
 daml.registerTemplate(User);

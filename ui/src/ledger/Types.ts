@@ -1,4 +1,4 @@
-// Copyright (c) 2019 The DAML Authors. All rights reserved.
+// Copyright (c) 2020 The DAML Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 import * as jtv from '@mojotech/json-type-validation';
 
@@ -12,10 +12,18 @@ export interface Serializable<T> {
 }
 
 /**
+ * This is a check to ensure that enum's are serializable. If the enum is named 'Color', the check
+ * is done by adding a line 'STATIC_IMPLEMENTS_SERIALIZABLE_CHECK<Color>(Color)' after the
+ * definition of 'Color'.
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
+export const STATIC_IMPLEMENTS_SERIALIZABLE_CHECK = <T>(_: Serializable<T>) => {}
+
+/**
  * Identifier of a DAML template.
  */
 export type TemplateId = {
-  packageId?: string;
+  packageId: string;
   moduleName: string;
   entityName: string;
 }
@@ -24,17 +32,20 @@ export type TemplateId = {
  * Interface for objects representing DAML templates. It is similar to the
  * `Template` type class in DAML.
  */
-export interface Template<T> extends Serializable<T> {
+export interface Template<T extends object, K = unknown> extends Serializable<T> {
   templateId: TemplateId;
-  Archive: Choice<T, {}>;
+  keyDecoder: () => jtv.Decoder<K>;
+  Archive: Choice<T, {}, {}>;
 }
 
 /**
  * Interface for objects representing DAML choices. It is similar to the
  * `Choice` type class in DAML.
  */
-export interface Choice<T, C> extends Serializable<C> {
+export interface Choice<T extends object, C, R> {
   template: () => Template<T>;
+  argumentDecoder: () => jtv.Decoder<C>;
+  resultDecoder: () => jtv.Decoder<R>;
   choiceName: string;
 }
 
@@ -43,7 +54,7 @@ const registeredTemplates: {[key: string]: Template<object>} = {};
 const templateIdToString = ({packageId, moduleName, entityName}: TemplateId) =>
   `${packageId}:${moduleName}:${entityName}`;
 
-export const registerTemplate = <T extends {}>(template: Template<T>) => {
+export const registerTemplate = <T extends object>(template: Template<T>) => {
   const templateId = templateIdToString(template.templateId);
   const oldTemplate = registeredTemplates[templateId];
   if (oldTemplate === undefined) {

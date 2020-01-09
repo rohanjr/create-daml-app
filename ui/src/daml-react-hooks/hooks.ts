@@ -44,7 +44,7 @@ export const useQuery = <T extends object, K>(template: Template<T, K>, queryFac
       loadQuery(state, template, query);
     }
   }, [state, template, query, contracts]);
-  return contracts ?? TemplateStore.emptyQueryResult();
+  return contracts ? contracts : TemplateStore.emptyQueryResult();
 }
 
 const loadFetchByKey = async <T extends object, K>(state: DamlLedgerState, template: Template<T, K>, key: K) => {
@@ -66,18 +66,18 @@ export type FetchResult<T extends object, K> = {
 
 /// React Hook for a lookup by key against the `/contracts/lookup` endpoint of the JSON API.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const useFetchByKey = <T extends object, K>(template: Template<T, K>, keyFactory: () => K, keyDeps?: readonly any[]): FetchResult<T, K> => {
-  const state = useDamlState();
-  const key = useMemo(keyFactory, keyDeps);
-  const contract = LedgerStore.getFetchByKeyResult(state.store, template, key);
-  useEffect(() => {
-    if (contract === undefined) {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      loadFetchByKey(state, template, key);
-    }
-  }, [state, template, key, contract]);
-  return contract ?? TemplateStore.emptyFetchResult();
-}
+// export const useFetchByKey = <T extends object, K>(template: Template<T, K>, keyFactory: () => K, keyDeps?: readonly any[]): FetchResult<T, K> => {
+//   const state = useDamlState();
+//   const key = useMemo(keyFactory, keyDeps);
+//   const contract = LedgerStore.getFetchByKeyResult(state.store, template, key);
+//   useEffect(() => {
+//     if (contract === undefined) {
+//       // eslint-disable-next-line @typescript-eslint/no-floating-promises
+//       loadFetchByKey(state, template, key);
+//     }
+//   }, [state, template, key, contract]);
+//   return contract ?? TemplateStore.emptyFetchResult();
+// }
 
 /// React Hook for a query against the `/contracts/search` endpoint that yields
 /// at most one contract. This can be thought of as a poor man's version of

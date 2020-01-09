@@ -44,7 +44,7 @@ const MainController: React.FC<Props> = ({}) => {
   const loadMyUser = React.useCallback(async () => {
     try {
       if (user.contract) {
-        setMyUser(user.contract.argument);
+        setMyUser(user.contract.payload);
       } else {
         alert("User not found\n");
       }
@@ -57,7 +57,7 @@ const MainController: React.FC<Props> = ({}) => {
   const loadAllUsers = React.useCallback(async () => {
     try {
       // TODO(RJR): Handle loading == true
-      const allUsers = allUserContracts.map((user) => user.argument);
+      const allUsers = allUserContracts.map((user) => user.payload);
       allUsers.sort((user1, user2) => user1.party.localeCompare(user2.party))
       setAllUsers(allUsers);
     } catch (error) {
