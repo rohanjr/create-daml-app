@@ -1,45 +1,85 @@
-import { Template } from '../ledger/Types';
-import { CreateEvent, Query } from '../ledger/Ledger';
+import { Template } from "../ledger/Types";
+import { CreateEvent, Query } from "../ledger/Ledger";
 import * as LedgerStore from './ledgerStore';
 
-const SET_QUERY_LOADING = 'SET_QUERY_LOADING';
-const SET_QUERY_RESULT = 'SET_QUERY_RESULT';
+enum ActionType {
+  SetQueryLoading,
+  SetQueryResult,
+  SetFetchByKeyLoading,
+  SetFetchByKeyResult,
+}
 
-type SetQueryLoadingAction<T> = {
-  type: typeof SET_QUERY_LOADING;
+type SetQueryLoadingAction<T extends object> = {
+  type: typeof ActionType.SetQueryLoading;
   template: Template<T>;
   query: Query<T>;
 }
 
-type SetQueryResultAction<T> = {
-  type: typeof SET_QUERY_RESULT;
+type SetQueryResultAction<T extends object> = {
+  type: typeof ActionType.SetQueryResult;
   template: Template<T>;
   query: Query<T>;
   contracts: CreateEvent<T>[];
 }
 
-export type Action = SetQueryLoadingAction<object> | SetQueryResultAction<object>;
+type SetFetchByKeyLoadingAction<T extends object, K> = {
+  type: typeof ActionType.SetFetchByKeyLoading;
+  template: Template<T, K>;
+  key: K;
+}
 
-export const setQueryLoading = <T>(template: Template<T>, query: Query<T>): SetQueryLoadingAction<T> => ({
-  type: SET_QUERY_LOADING,
+type SetFetchByKeyResultAction<T extends object, K> = {
+  type: typeof ActionType.SetFetchByKeyResult;
+  template: Template<T, K>;
+  key: K;
+  contract: CreateEvent<T, K> | null;
+}
+
+export type Action =
+  | SetQueryLoadingAction<object>
+  | SetQueryResultAction<object>
+  | SetFetchByKeyLoadingAction<object, unknown>
+  | SetFetchByKeyResultAction<object, unknown>
+
+export const setQueryLoading = <T extends object>(template: Template<T>, query: Query<T>): SetQueryLoadingAction<T> => ({
+  type: ActionType.SetQueryLoading,
   template,
   query,
 });
 
-export const setQueryResult = <T>(template: Template<T>, query: Query<T>, contracts: CreateEvent<T>[]): SetQueryResultAction<T> => ({
-  type: SET_QUERY_RESULT,
+export const setQueryResult = <T extends object>(template: Template<T>, query: Query<T>, contracts: CreateEvent<T>[]): SetQueryResultAction<T> => ({
+  type: ActionType.SetQueryResult,
   template,
   query,
   contracts,
 });
 
+export const setFetchByKeyLoading = <T extends object, K>(template: Template<T, K>, key: K): SetFetchByKeyLoadingAction<T, K> => ({
+  type: ActionType.SetFetchByKeyLoading,
+  template,
+  key,
+});
+
+export const setFetchByKeyResult = <T extends object, K>(template: Template<T, K>, key: K, contract: CreateEvent<T, K> | null): SetFetchByKeyResultAction<T, K> => ({
+  type: ActionType.SetFetchByKeyResult,
+  template,
+  key,
+  contract,
+});
+
 export const reducer = (ledgerStore: LedgerStore.Store, action: Action): LedgerStore.Store => {
   switch (action.type) {
-    case SET_QUERY_LOADING: {
+    case ActionType.SetQueryLoading: {
       return LedgerStore.setQueryLoading(ledgerStore, action.template, action.query);
     }
-    case SET_QUERY_RESULT: {
+    case ActionType.SetQueryResult: {
       return LedgerStore.setQueryResult(ledgerStore, action.template, action.query, action.contracts);
+    }
+    case ActionType.SetFetchByKeyLoading: {
+      return LedgerStore.setFetchByKeyLoading(ledgerStore, action.template, action.key);
+    }
+    case ActionType.SetFetchByKeyResult: {
+      return LedgerStore.setFetchByKeyResult(ledgerStore, action.template, action.key, action.contract);
     }
   }
 }
