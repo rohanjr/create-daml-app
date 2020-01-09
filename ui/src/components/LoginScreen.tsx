@@ -24,7 +24,7 @@ const LoginScreen: React.FC<Props> = ({onLogin}) => {
         alert('Wrong password.');
         return;
       }
-      let credentials: Credentials = {party: username, token: password};
+      const credentials: Credentials = {party: username, token: password};
       const ledger = new Ledger(credentials.token);
       const user = await ledger.pseudoLookupByKey(User, {party: username});
       if (user === undefined) {
@@ -46,11 +46,11 @@ const LoginScreen: React.FC<Props> = ({onLogin}) => {
       await ledger.create(User, user);
       await handleLogin();
     } catch(error) {
-        const {errors} = error;
-        if (errors.length === 1 && errors[0].includes("DuplicateKey")) {
-          alert("You are already signed up.");
-          return;
-        }
+        // const {errors} = error;
+        // if (errors.length === 1 && errors[0].includes("DuplicateKey")) {
+        //   alert("You are already signed up.");
+        //   return;
+        // }
       alert("Unknown error:\n" + error);
     }
   }

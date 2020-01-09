@@ -14,7 +14,7 @@ const App: React.FC = () => {
     ? <DamlLedger credentials={credentials}>
         <MainScreen onLogout={() => setCredentials(undefined)}/>
       </DamlLedger>
-    : <LoginScreen onLogin={() => setCredentials} />
+    : <LoginScreen onLogin={setCredentials} />
 }
 
 export default App;

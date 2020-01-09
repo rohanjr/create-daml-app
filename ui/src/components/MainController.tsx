@@ -15,7 +15,7 @@ const MainController: React.FC<Props> = ({}) => {
   const [allUsers, setAllUsers] = React.useState<User[]>([]);
 
   const party = useParty();
-  const user = usePseudoFetchByKey(User, () => ({ party }), [party]);
+  const user = usePseudoFetchByKey(User, () => ({party}), [party]);
   const allUserContracts = useQuery(User).contracts;
 
   const [exerciseAddFriend, _loadingAddFriend] = usePseudoExerciseByKey(User.AddFriend);
@@ -41,16 +41,20 @@ const MainController: React.FC<Props> = ({}) => {
     }
   }
 
-  const loadMyUser = () => {
+  const loadMyUser = React.useCallback(async () => {
     try {
-      setMyUser(user.contract!.argument);
+      if (user.contract) {
+        setMyUser(user.contract.argument);
+      } else {
+        alert("User not found\n");
+      }
       // TODO(RJR): Handle null contract and loading flag
     } catch (error) {
       alert("Unknown error:\n" + error);
     }
-  }
+  }, []);
 
-  const loadAllUsers = () => {
+  const loadAllUsers = React.useCallback(async () => {
     try {
       // TODO(RJR): Handle loading == true
       const allUsers = allUserContracts.map((user) => user.argument);
@@ -59,7 +63,7 @@ const MainController: React.FC<Props> = ({}) => {
     } catch (error) {
       alert("Unknown error:\n" + error);
     }
-  }
+  }, []);
 
   React.useEffect(() => { loadMyUser(); }, [loadMyUser]);
   React.useEffect(() => { loadAllUsers(); }, [loadAllUsers]);
