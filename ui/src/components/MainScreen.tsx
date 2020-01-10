@@ -1,6 +1,5 @@
 import React from 'react'
 import { Image, Menu } from 'semantic-ui-react'
-import Ledger from '@digitalasset/daml-ledger-fetch';
 import MainController from './MainController';
 import { useParty } from '../daml-react-hooks';
 

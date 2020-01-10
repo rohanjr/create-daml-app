@@ -1,4 +1,4 @@
-import { encode, decode } from 'jwt-simple';
+import { encode } from 'jwt-simple';
 
 export const LEDGER_ID: string = 'create-daml-app-sandbox';
 

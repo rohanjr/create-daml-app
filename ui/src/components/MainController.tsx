@@ -4,19 +4,17 @@ import { Party } from '@digitalasset/daml-json-types';
 import { User } from '../daml/create-daml-app/User';
 import { useParty, useReload, usePseudoExerciseByKey, useFetchByKey, useQuery } from '../daml-react-hooks';
 
-type Props = {}
-
 /**
  * React component to control the `MainView`.
  */
-const MainController: React.FC<Props> = ({}) => {
+const MainController: React.FC = () => {
   const party = useParty();
   const myUser = useFetchByKey(User, () => party, [party]);
   const allUsers = useQuery(User, () => ({}), []);
   const reload = useReload();
 
-  const [exerciseAddFriend, _loadingAddFriend] = usePseudoExerciseByKey(User.AddFriend);
-  const [exerciseRemoveFriend, _loadingRemoveFriend] = usePseudoExerciseByKey(User.RemoveFriend);
+  const [exerciseAddFriend] = usePseudoExerciseByKey(User.AddFriend);
+  const [exerciseRemoveFriend] = usePseudoExerciseByKey(User.RemoveFriend);
 
   const addFriend = async (friend: Party): Promise<boolean> => {
     try {
