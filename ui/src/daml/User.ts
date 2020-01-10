@@ -39,9 +39,10 @@ export const Archive: daml.Serializable<Archive> = ({
 });
 
 
-const getContractIdDecoder: () => () => jtv.Decoder<daml.ContractId<User>> = () => () => {
+const getContractIdDecoder: () => jtv.Decoder<daml.ContractId<User>> = () => {
   return daml.ContractId(User).decoder();
 }
+
 export type User = {
   party: daml.Party;
   friends: daml.Party[];
@@ -74,13 +75,13 @@ export const User: daml.Template<User> & {
     template: () => User,
     choiceName: 'AddFriend',
     argumentDecoder: AddFriend.decoder,
-    resultDecoder: getContractIdDecoder(),
+    resultDecoder: getContractIdDecoder,
   },
   RemoveFriend: {
     template: () => User,
     choiceName: 'RemoveFriend',
     argumentDecoder: RemoveFriend.decoder,
-    resultDecoder: getContractIdDecoder(),
+    resultDecoder: getContractIdDecoder,
   },
 };
 daml.registerTemplate(User);

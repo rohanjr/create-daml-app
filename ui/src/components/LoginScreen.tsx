@@ -51,7 +51,7 @@ const LoginScreen: React.FC<Props> = ({onLogin}) => {
         //   alert("You are already signed up.");
         //   return;
         // }
-      alert("Unknown error:\n" + error);
+      alert("Unknown error:\n" + JSON.stringify(error));
     }
   }
 
