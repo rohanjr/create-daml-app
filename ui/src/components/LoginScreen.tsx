@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Form, Grid, Header, Image, Segment } from 'semantic-ui-react'
 import Credentials, { computeToken } from '../ledger/Credentials';
-import Ledger from '../ledger/Ledger';
+import Ledger from '@digitalasset/daml-ledger-fetch';
 import { User } from '../daml/User';
 
 type Props = {

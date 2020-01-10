@@ -1,7 +1,7 @@
 import { storiesOf } from '@storybook/react';
 import React from 'react';
 import MainView, { Props } from "./MainView";
-import { Party } from '../ledger/Types';
+import { Party } from '@digitalasset/daml-json-types';
 import { User } from '../daml/User';
 
 const addFriend = async (friend: Party): Promise<boolean> => { alert('Add friend: ' + friend); return true; }

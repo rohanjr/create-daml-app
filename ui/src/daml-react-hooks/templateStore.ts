@@ -1,5 +1,5 @@
 import * as immutable from 'immutable';
-import { CreateEvent, Query } from "../ledger/Ledger";
+import { CreateEvent, Query } from '@digitalasset/daml-ledger-fetch';
 
 export type QueryResult<T extends object, K> = {
   contracts: CreateEvent<T, K>[];

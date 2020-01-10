@@ -1,5 +1,5 @@
 // Not generated, but should be using daml2ts.
-import * as daml from "../ledger/Types";
+import * as daml from '@digitalasset/daml-json-types';
 import * as jtv from '@mojotech/json-type-validation';
 import packageId from './PackageId';
 

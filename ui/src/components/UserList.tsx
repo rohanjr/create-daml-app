@@ -1,7 +1,7 @@
 import React from 'react'
 import { List, SemanticICONS } from 'semantic-ui-react'
 import ListActionItem from './ListActionItem';
-import { Party } from '../ledger/Types';
+import { Party } from '@digitalasset/daml-json-types';
 import { User } from '../daml/User';
 
 type Props = {

@@ -3,7 +3,7 @@ import { Container, Grid, Header, Icon, Segment, Divider } from 'semantic-ui-rea
 import PartyListEdit from './PartyListEdit';
 import UserList from './UserList';
 import { User } from '../daml/User';
-import { Party } from '../ledger/Types';
+import { Party } from '@digitalasset/daml-json-types';
 
 export type Props = {
   myUser: User;

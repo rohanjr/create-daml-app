@@ -1,8 +1,8 @@
 import React, { useReducer, useMemo } from 'react';
 import { DamlLedgerContext } from './context';
-import Credentials from '../ledger/Credentials';
+import Credentials from './credentials';
 import * as LedgerStore from './ledgerStore';
-import Ledger from '../ledger/Ledger';
+import Ledger from '@digitalasset/daml-ledger-fetch';
 import { reducer } from './reducer';
 
 type Props = {

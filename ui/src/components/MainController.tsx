@@ -1,6 +1,6 @@
 import React from 'react';
 import MainView from './MainView';
-import { Party } from '../ledger/Types';
+import { Party } from '@digitalasset/daml-json-types';
 import { User } from '../daml/User';
 import { useParty, usePseudoExerciseByKey, usePseudoFetchByKey, useQuery } from '../daml-react-hooks';
 
