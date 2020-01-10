@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Grid, Header, Icon, Segment, Divider } from 'semantic-ui-react';
 import PartyListEdit from './PartyListEdit';
 import UserList from './UserList';
-import { User } from '../daml/User';
+import { User } from '../daml/create-daml-app/User';
 import { Party } from '@digitalasset/daml-json-types';
 
 export type Props = {

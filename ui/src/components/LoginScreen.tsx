@@ -2,7 +2,7 @@ import React from 'react'
 import { Button, Form, Grid, Header, Image, Segment } from 'semantic-ui-react'
 import Credentials, { computeToken } from '../ledger/Credentials';
 import Ledger from '@digitalasset/daml-ledger-fetch';
-import { User } from '../daml/User';
+import { User } from '../daml/create-daml-app/User';
 
 type Props = {
   onLogin: (credentials: Credentials) => void;
@@ -26,8 +26,8 @@ const LoginScreen: React.FC<Props> = ({onLogin}) => {
       }
       const credentials: Credentials = {party: username, token: password};
       const ledger = new Ledger(credentials.token);
-      const user = await ledger.pseudoLookupByKey(User, {party: username});
-      if (user === undefined) {
+      const user = await ledger.lookupByKey(User, username);
+      if (user === null) {
         alert("You have not yet signed up.");
         return;
       }

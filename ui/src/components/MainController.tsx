@@ -1,11 +1,10 @@
 import React from 'react';
 import MainView from './MainView';
 import { Party } from '@digitalasset/daml-json-types';
-import { User } from '../daml/User';
-import { useParty, usePseudoExerciseByKey, usePseudoFetchByKey, useQuery } from '../daml-react-hooks';
+import { User } from '../daml/create-daml-app/User';
+import { useParty, usePseudoExerciseByKey, useFetchByKey, useQuery } from '../daml-react-hooks';
 
-type Props = {
-}
+type Props = {}
 
 /**
  * React component to control the `MainView`.
@@ -15,7 +14,7 @@ const MainController: React.FC<Props> = ({}) => {
   const [allUsers, setAllUsers] = React.useState<User[]>([]);
 
   const party = useParty();
-  const user = usePseudoFetchByKey(User, () => ({party}), [party]);
+  const user = useFetchByKey(User, () => party, [party]);
   const allUserContracts = useQuery(User).contracts;
 
   const [exerciseAddFriend, _loadingAddFriend] = usePseudoExerciseByKey(User.AddFriend);
