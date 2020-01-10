@@ -6,12 +6,11 @@ import { User } from '../daml/create-daml-app/User';
 import { Party } from '@digitalasset/daml-json-types';
 
 export type Props = {
-  myUser: User;
+  myUser: User | null;
   allUsers: User[];
   onAddFriend: (friend: Party) => Promise<boolean>;
   onRemoveFriend: (friend: Party) => Promise<void>;
-  onReloadMyUser: () => void;
-  onReloadAllUsers: () => void;
+  onReload: () => void;
 }
 
 /**
@@ -24,20 +23,20 @@ const MainView: React.FC<Props> = (props) => {
         <Grid.Row stretched>
           <Grid.Column>
             <Header as='h1' size='huge' color='blue' textAlign='center' style={{padding: '1ex 0em 0ex 0em'}}>
-                Welcome, {props.myUser.party}!
+                {props.myUser ? `Welcome, ${props.myUser.party}!` : 'Loading...'}
             </Header>
 
             <Segment>
               <Header as='h2'>
                 <Icon name='user' />
                 <Header.Content>
-                  {props.myUser.party}
+                  {props.myUser?.party ?? 'Loading...'}
                   <Header.Subheader>Me and my friends</Header.Subheader>
                 </Header.Content>
               </Header>
               <Divider />
               <PartyListEdit
-                parties={props.myUser.friends}
+                parties={props.myUser?.friends ?? []}
                 onAddParty={props.onAddFriend}
                 onRemoveParty={props.onRemoveFriend}
               />
@@ -52,7 +51,7 @@ const MainView: React.FC<Props> = (props) => {
                     name='sync alternate'
                     size='small'
                     style={{marginLeft: '0.5em'}}
-                    onClick={props.onReloadAllUsers}
+                    onClick={props.onReload}
                   />
                   <Header.Subheader>Others and their friends</Header.Subheader>
                 </Header.Content>
