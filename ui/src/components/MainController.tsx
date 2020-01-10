@@ -12,7 +12,7 @@ type Props = {}
 const MainController: React.FC<Props> = ({}) => {
   const party = useParty();
   const myUser = useFetchByKey(User, () => party, [party]);
-  const allUsers = useQuery(User);
+  const allUsers = useQuery(User, () => ({}), []);
   const reload = useReload();
 
   const [exerciseAddFriend, _loadingAddFriend] = usePseudoExerciseByKey(User.AddFriend);
