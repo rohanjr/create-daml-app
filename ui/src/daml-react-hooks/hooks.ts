@@ -3,10 +3,11 @@ import { Event, Query, CreateEvent } from '@digitalasset/daml-ledger-fetch';
 import { useEffect, useMemo, useState, useContext } from "react";
 import * as LedgerStore from './ledgerStore';
 import * as TemplateStore from './templateStore';
-import { setQueryLoading, setQueryResult, setFetchByKeyLoading, setFetchByKeyResult } from "./reducer";
+import { setQueryLoading, setQueryResult, updateQueryResult, setFetchByKeyLoading, setFetchByKeyResult } from "./reducer";
 import { DamlLedgerState, DamlLedgerContext } from './context';
+import * as immutable from 'immutable'
 
-const useDamlState = (): DamlLedgerState => {
+export const useDamlState = (): DamlLedgerState => {
   const state = useContext(DamlLedgerContext);
   if (!state) {
     throw Error("Trying to use DamlLedgerContext before initializing.")
@@ -79,21 +80,6 @@ export const useFetchByKey = <T extends object, K>(template: Template<T, K>, key
   return contract ?? TemplateStore.emptyFetchResult();
 }
 
-/// React Hook for a query against the `/contracts/search` endpoint that yields
-/// at most one contract. This can be thought of as a poor man's version of
-/// `fetchByKey`.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const usePseudoFetchByKey = <T extends object, K>(template: Template<T, K>, keyFactory: () => Query<T>, keyDeps?: readonly any[]): FetchResult<T, K> => {
-  const entry = useQuery(template, keyFactory, keyDeps);
-  if (entry.contracts.length > 1) {
-    throw Error("usePseudoFetchByKey: query returned multiple cotracts");
-  }
-  return useMemo(() => ({
-    loading: entry.loading,
-    contract: entry.contracts[0] || null,
-  }), [entry]);
-}
-
 const reloadTemplate = async <T extends object, K>(state: DamlLedgerState, template: Template<T, K>) => {
   const templateStore = state.store.templateStores.get(template) as TemplateStore.Store<T, K> | undefined;
   if (templateStore) {
@@ -106,15 +92,20 @@ const reloadTemplate = async <T extends object, K>(state: DamlLedgerState, templ
   }
 }
 
-const reloadEvents = async (state: DamlLedgerState, events: Event<object>[]) => {
-  // TODO(MH): This is a sledge hammer approach. We completely reload every
-  // single template that has been touched by the events. A future optimization
-  // would be to remove the archived templates from their tables and add the
-  // created templates wherever they match.
-  const templates = new Set(events.map((event) =>
-    lookupTemplate('created' in event ? event.created.templateId : event.archived.templateId)
-  ));
-  await Promise.all(Array.from(templates).map((template) => reloadTemplate(state, template)));
+// TODO(MH): We need to update the key lookups as well.
+const updateTemplate = <T extends object, K>(state: DamlLedgerState, template: Template<T, K>, events: Event<T, K>[]) => {
+  const templateStore = state.store.templateStores.get(template) as TemplateStore.Store<T, K> | undefined;
+  if (templateStore !== undefined) {
+    const queries: Query<T>[] = Array.from(templateStore.queryResults.keys());
+    queries.forEach((query) => state.dispatch(updateQueryResult(template, query, events)));
+  }
+}
+
+export const updateEvents = (state: DamlLedgerState, events: Event<object>[]) => {
+  const eventsByTemplateId = immutable.List(events).groupBy((event) =>
+    'created' in event ? event.created.templateId : event.archived.templateId);
+  eventsByTemplateId.forEach((events, tid) =>
+    updateTemplate(state, lookupTemplate(tid), events.valueSeq().toArray()));
 }
 
 /// React Hook that returns a function to exercise a choice and a boolean
@@ -130,7 +121,7 @@ export const useExercise = <T extends object, C, R>(choice: Choice<T, C, R>): [(
     // NOTE(MH): We want to signal the UI that the exercise is finished while
     // were still updating the affected templates "in the backgound".
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    reloadEvents(state, events);
+    updateEvents(state, events);
     return result;
   }
   return [exercise, loading];
@@ -149,7 +140,7 @@ export const usePseudoExerciseByKey = <T extends object, C, R>(choice: Choice<T,
     // NOTE(MH): We want to signal the UI that the exercise is finished while
     // were still updating the affected templates "in the backgound".
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    reloadEvents(state, events);
+    updateEvents(state, events);
     return result;
   }
   return [exercise, loading];
